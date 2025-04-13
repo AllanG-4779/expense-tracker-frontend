@@ -1,9 +1,10 @@
+import TransactionPage from "@/app/components/TransactionPage";
 import React from "react";
 
 const Transactions = () => {
   return (
     <div>
-      <p>Hello Transactions</p>
+      <TransactionPage />
     </div>
   );
 };

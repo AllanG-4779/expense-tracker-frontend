@@ -1,24 +1,28 @@
 import { NavElement } from "../types/NavElement";
+import { MdAccountCircle } from "react-icons/md";
+import { BiTransfer } from "react-icons/bi";
+import { BsViewStacked } from "react-icons/bs";
+import { GrTransaction } from "react-icons/gr";
 
 export const Navigation: NavElement[] = [
   {
-    to: "/",
-    name: "Add Transaction",
-    icon: "transacton",
+    to: "/account/user/expenses",
+    name: "Overview",
+    icon: <BsViewStacked />,
   },
   {
-    to: "/",
+    to: "/account/user/expenses",
     name: "Transactions",
-    icon: "transaction",
+    icon: <GrTransaction />,
   },
   {
     to: "/",
     name: "Accounts",
-    icon: "accounts",
+    icon: <MdAccountCircle />,
   },
   {
     to: "/",
     name: "Budgets",
-    icon: "budgets",
+    icon: <BiTransfer />,
   },
 ];

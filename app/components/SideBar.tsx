@@ -4,13 +4,16 @@ import Link from "next/link";
 
 const SideBar = () => {
   return (
-    <div className="flex flex-col w-full h-full bg-[#fcfaf8] p-4">
-      <h1 className="text-2xl font-bold mb-4">Fund Manager</h1>
+    <div className="flex flex-col gap-3 w-full h-full bg-[#dc4b3e] p-4">
+      <h1 className="text-2xl font-extrabold mb-4 text-[#fff]">
+        Funds Manager
+      </h1>
       {Navigation.map((each, key) => (
         <div
           key={key}
-          className="p-2 w-full hover:bg-[#f2f2f2] rounded-md mb-2 font-light "
+          className="p-2 w-full flex gap-3 items-center hover:bg-[#dc4b3e25] rounded-md mb-2  text-white "
         >
+          <div>{each.icon}</div>
           <Link href={each.to}>
             <p className="text-sm">{each.name}</p>
           </Link>
