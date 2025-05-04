@@ -5,13 +5,21 @@ const CardComponent: React.FC<{
   amount: number;
   icon: ReactElement;
   currency: string;
-}> = (props) => {   
+}> = (props) => {
   return (
-    <div className="flex gap-2 bg-white w-full p-5 rounded-md items-center">
-      <div id="icon">{props.icon}</div>
+    <div className="flex gap-10 bg-white  p-5 rounded-lg items-center transition-all duration-300 ease-in-out">
+      <div id="icon" className="text-[#dc4b3e] font-bold text-2xl">
+        {props.icon}
+      </div>
       <div id="amount" className="flex flex-col gap-2 ">
-        <div className=" font-bold text-gray-300">{props.name}</div>
-        <div className=" text-gray-800">{props.amount}</div>
+        <div className=" font-semibold text-slate-500">{props.name}</div>
+        <div className="text-gray-800 text-xl">
+          {props.currency}{" "}
+          {props.amount.toLocaleString("en-US", {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2,
+          })}
+        </div>
       </div>
     </div>
   );

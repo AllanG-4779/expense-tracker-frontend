@@ -1,8 +1,9 @@
+import Link from "next/link";
 import React from "react";
 
 const TableComponent = () => {
   return (
-    <div className="flex flex-col p-4 bg-white rounded-md shadow-md ">
+    <div className="flex flex-col p-4 bg-white rounded-md shadow ">
       <div>
         <p>Recent Transactions</p>
       </div>
@@ -49,7 +50,12 @@ const TableComponent = () => {
             ))}
           </tbody>
         </table>
-        <div>{/* Showing pagination data */}</div>
+        <div className="p-2 flex justify-end items-center">
+          {" "}
+          <Link href={"#"} className="text-[#dc4b3e] font-semibold underline">
+            View all
+          </Link>
+        </div>
       </div>
     </div>
   );

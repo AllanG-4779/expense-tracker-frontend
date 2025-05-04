@@ -27,7 +27,7 @@ const ExpenseTag = () => {
   const options = {};
 
   return (
-    <div className="flex flex-col gap-4 w-full bg-white p-4 rounded-md shadow-md">
+    <div className="flex flex-col gap-4 max-w-full bg-white p-4 rounded-lg">
       <div id="title" className="flex justify-between ">
         <p className="font-medium text-xl">Expense Overview</p>
         <div className="">

@@ -11,12 +11,12 @@ export const Navigation: NavElement[] = [
     icon: <BsViewStacked />,
   },
   {
-    to: "/account/user/expenses",
+    to: "/account/user/transactions",
     name: "Transactions",
     icon: <GrTransaction />,
   },
   {
-    to: "/",
+    to: "/account/user/accounts",
     name: "Accounts",
     icon: <MdAccountCircle />,
   },

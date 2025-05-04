@@ -1,4 +1,4 @@
-import { formatDate, getDaysInMonth, getISOWeekYear } from "date-fns";
+import { formatDate } from "date-fns";
 
 export const getGraphData = (parameter: string, data: number[]) => {
   const datasets = {
@@ -17,8 +17,7 @@ export const getGraphData = (parameter: string, data: number[]) => {
   return datasets;
 };
 
-const getIsoWeek = (date: Date, param: string): string[] => {
-  const year = getISOWeekYear(date);
+const getIsoWeek = (date: Date, param: string): string[] => {  
   // Jan 4 is the ISO WEEK start
   let length = 7;
   let startDate = new Date();

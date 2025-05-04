@@ -1,14 +1,16 @@
+"use client";
 import React, { ReactNode } from "react";
 import SideBar from "../components/SideBar";
+import ModalProvider, { ModalContext } from "../data/context/ModalContext";
 
 const AccountLayout = ({ children }: { children: ReactNode }) => {
   return (
-    <div className="flex h-screen md:flex-row bg-[#f3f5f7]">
-      <div className="hidden md:flex w-1/6  h-full">
+    <ModalProvider>
+      <div className="flex max-h-screen md:flex-row ">
         <SideBar />
+        <main className="h-full w-full md:ml-64  ">{children}</main>
       </div>
-      {children}
-    </div>
+    </ModalProvider>
   );
 };
 
