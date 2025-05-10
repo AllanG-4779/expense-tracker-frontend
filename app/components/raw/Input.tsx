@@ -7,6 +7,8 @@ const Input: React.FC<InputProps> = (props) => {
       <label className="text-gray-700 font-bold">{props.label}</label>
       <input
         type={props.type}
+        value={props.value}
+        onChange={props.onChange}
         placeholder={props.placeholder}
         className="w-full outline-none bg-transparent text-gray-700 placeholder-gray-400"
       />

@@ -21,7 +21,7 @@ export const Navigation: NavElement[] = [
     icon: <MdAccountCircle />,
   },
   {
-    to: "/",
+    to: "/account/user/budget",
     name: "Budgets",
     icon: <BiTransfer />,
   },
