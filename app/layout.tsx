@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Poppins } from "next/font/google";
 
 import "./globals.css";
+import AuthProvider from "./data/context/authContext";
 
 const geistSans = Poppins({
   subsets: ["latin"],
@@ -20,7 +21,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={geistSans.className}>{children}</body>
+      <AuthProvider>
+        <body className={geistSans.className}>{children}</body>
+      </AuthProvider>
     </html>
   );
 }

@@ -26,5 +26,11 @@ export type LoginUserResponse = {
     token: string;
     valid_for: number;
   };
+  user: {
+    username: string;
+    email: string;
+    first_name?: string;
+    last_name?: string;
+  };
   successful: boolean;
 };

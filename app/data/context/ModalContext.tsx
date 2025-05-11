@@ -24,7 +24,7 @@ const ModalProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   const toggleSidebar = () => {
-    setIsSideBarOpen(!isSideBarOpen);
+    setIsSideBarOpen(!isSideBarOpen); 
   };
 
   return (

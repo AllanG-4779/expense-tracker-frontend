@@ -4,8 +4,10 @@ import Link from "next/link";
 import { ModalContext } from "../data/context/ModalContext";
 import { MdClose } from "react-icons/md";
 
+
 const SideBar = () => {
   const appContext = useContext(ModalContext);
+  
   if (appContext === undefined) {
     throw new Error("useModalContext must be used within a ModalProvider");
   }

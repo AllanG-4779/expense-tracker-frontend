@@ -6,6 +6,7 @@ import { LoginUser, LoginUserResponse } from "../types/apiTypes";
 import { fetchClient } from "../utils/fetchClient";
 import Alert from "./raw/Alert";
 import { useRouter } from "next/navigation";
+import { AuthContext } from "../data/context/authContext";
 
 const LoginScreen = () => {
   const [payload, setPayload] = React.useState<LoginUser>({
@@ -16,6 +17,10 @@ const LoginScreen = () => {
   const [loading, setLoading] = React.useState(false);
   const [message, setMessage] = React.useState("");
   const [type, setType] = React.useState("success");
+  const authContext = React.useContext(AuthContext);
+  if (!authContext) {
+    throw new Error("AuthContext is not defined");
+  }
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!payload.username || !payload.password) {
@@ -38,7 +43,13 @@ const LoginScreen = () => {
     } else {
       setMessage(response.message);
       setType("success");
+      authContext?.login(response.body.token, {
+        username: payload.username,
+        email: response.user.email,
+      });
+      console.log("User logged in:", authContext); // Debugging line
       setLoading(false);
+
       router.push("/account/user/accounts");
     }
   };
