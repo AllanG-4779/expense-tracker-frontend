@@ -2,21 +2,35 @@
 export const fetchClient = async <T = unknown>(
   path: string,
   body: unknown = {},
-  method: "POST" | "PUT" | "PATCH" = "POST"
+  method: "POST" | "PUT" | "PATCH" | "GET" = "POST",
+  authenticated: boolean = false,
+  token: string = ""
 ): Promise<T> => {
   const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
   console.log("Base URL:", baseUrl); // Debugging line
+  console.log("Access token :", token); // Debugging line
   if (!baseUrl) {
     throw new Error(
       "Missing NEXT_PUBLIC_API_BASE_URL. Did you restart your dev server?"
     );
   }
+
+  if (authenticated && !token) {
+    throw new Error("Missing token for protected route");
+  }
+  const headers: HeadersInit = authenticated
+    ? {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      }
+    : {
+        "Content-Type": "application/json",
+      };
+  console.log("Headers:", headers); // Debugging line
   const res = await fetch(`${baseUrl}${path}`, {
     method,
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(body),
+    headers: headers,
+    body: method !== "GET" ? JSON.stringify(body) : undefined,
   });
 
   return res.json();

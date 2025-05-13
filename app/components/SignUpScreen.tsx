@@ -4,8 +4,8 @@ import React, { useEffect } from "react";
 import Input from "./raw/Input";
 import { CreateUser, CreateUserResponse } from "../types/apiTypes";
 import { fetchClient } from "../utils/fetchClient";
-import { useRouter } from "next/navigation";
 import Alert from "./raw/Alert";
+import { useRouter } from "next/navigation";
 
 const SignUpScreen = () => {
   const [payload, setPayload] = React.useState<CreateUser>({

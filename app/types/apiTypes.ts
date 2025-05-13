@@ -34,3 +34,74 @@ export type LoginUserResponse = {
   };
   successful: boolean;
 };
+
+/**
+ *  {
+            "ID": 5,
+            "CreatedAt": "2025-05-13T09:13:30.642089Z",
+            "UpdatedAt": "2025-05-13T09:13:30.642089Z",
+            "DeletedAt": null,
+            "UserID": 1,
+            "Name": "DEBT",
+            "Balance": 0
+        },
+ */
+export type AccountResponse = {
+  message: string;
+  error: string;
+  status: number;
+  accounts: Account[];
+  successful: boolean;
+};
+export type Account = {
+  ID: number;
+  CreatedAt: string;
+  UpdatedAt: string;
+  DeletedAt: string | null;
+  UserID: number;
+  Name: string;
+  Balance: number;
+};
+/*
+{
+    {
+    "icon":"test",
+    "name":"ENTERTAINMENT",
+    "description":"All Movement via Money",
+    "type":"expense"
+}
+*/
+
+export type CreateCategory = {
+  icon: string;
+  name: string;
+  description: string;
+  type: "income" | "expense";
+};
+
+/**
+ * {
+    "categories": [
+       
+    ],
+    "message": "Categories fetched"
+}
+ */
+export type Category = {
+  ID: number;
+  CreatedAt: string;
+  UpdatedAt: string;
+  DeletedAt: string | null;
+  UserID: number;
+  icon: string;
+  Name: string;
+  description: string;
+  type: "income" | "expense";
+};
+export type CategoryResponse = {
+  message: string;
+  error: string;
+  status: number;
+  categories: Category[];
+  successful: boolean;
+};

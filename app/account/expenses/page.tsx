@@ -1,8 +1,8 @@
-import Expenses from '@/app/components/Expenses'
-import React from 'react'
+import Expenses from "@/app/components/Expenses";
+import React from "react";
 
 const ExpensesPage = () => {
-  return <Expenses/>
-}
+  return <Expenses />;
+};
 
-export default ExpensesPage
+export default ExpensesPage;
