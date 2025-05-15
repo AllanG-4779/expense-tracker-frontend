@@ -22,10 +22,7 @@ export type LoginUserResponse = {
   message: string;
   error: string;
   status: number;
-  body: {
-    token: string;
-    valid_for: number;
-  };
+  body: Token;
   user: {
     username: string;
     email: string;
@@ -104,4 +101,53 @@ export type CategoryResponse = {
   status: number;
   categories: Category[];
   successful: boolean;
+};
+export type Token = {
+  token: string;
+  valid_for: number;
+  issued_at: number;
+  expires_at: number;
+};
+export type TransactionPayload = {
+  /**
+   * {
+   "amount":500,
+   "date":"02-04-2025",
+   "category":"FOOD",
+   "account_id":1
+}
+   */
+  amount: number;
+  title: string;
+  date: string;
+  description: string;
+  category: string;
+  account_id: number;
+};
+export type TransactionResponse = {
+  message: string;
+  error: string;
+  status: number;
+  transactions: Transaction[];
+  successful: boolean;
+};
+
+export type Transaction = {
+  ID: number;
+  CreatedAt: string;
+  UpdatedAt: string;
+  DeletedAt: string | null;
+  UserID: number;
+  Amount: number;
+  Title: string;
+  Type: string;
+  Date: string;
+  Description: string;
+  CategoryID: number;
+  AccountID: number;
+  Category: {
+    ID: number;
+    Name: string;
+    Description: string;
+  };
 };

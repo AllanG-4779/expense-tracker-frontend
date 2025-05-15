@@ -10,6 +10,7 @@ const AuthLayout = ({ children }: { children: ReactNode }) => {
     throw new Error("useAuthContext must be used within an AuthProvider");
   }
   const { isAuthenticated } = authContext;
+  
   if (isAuthenticated) {
     router.push("/account/expenses");
   }

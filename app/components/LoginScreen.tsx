@@ -20,7 +20,7 @@ const LoginScreen = () => {
   const authContext = React.useContext(AuthContext);
   if (!authContext) {
     throw new Error("AuthContext is not defined");
-  } 
+  }
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!payload.username || !payload.password) {
@@ -35,22 +35,20 @@ const LoginScreen = () => {
     );
 
     console.log("Response:", response); // Debugging line
-
+    setLoading(false);
     if (response.error) {
       setMessage(response.error);
       setType("error");
-      setLoading(false);
     } else {
       setMessage(response.message);
       setType("success");
       if (authContext.login) {
-        authContext.login(response.body.token, {
+        authContext.login(response.body, {
           username: payload.username,
           email: response.user.email,
         });
       }
       console.log("User logged in:", authContext); // Debugging line
-      setLoading(false);
 
       router.push("/account/user/accounts");
     }

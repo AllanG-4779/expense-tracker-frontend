@@ -4,6 +4,7 @@ import SideBar from "../components/SideBar";
 import ModalProvider from "../data/context/ModalContext";
 import { AuthContext } from "../data/context/authContext";
 import { useRouter } from "next/navigation";
+import AppUserProvider from "../data/context/AppUserContext";
 
 const AccountLayout = ({ children }: { children: ReactNode }) => {
   const authContext = useContext(AuthContext);
@@ -19,7 +20,6 @@ const AccountLayout = ({ children }: { children: ReactNode }) => {
       router.push("/auth/signin");
     }
   }, []);
-  console.log("authContext", authContext);
 
   // console.log("isAuthenticated", authContext);
   // if (!authContext.isAuthenticated) {
@@ -39,12 +39,14 @@ const AccountLayout = ({ children }: { children: ReactNode }) => {
   // }
 
   return (
-    <ModalProvider>
-      <div className="flex max-h-screen md:flex-row ">
-        <SideBar />
-        <main className="h-full w-full md:ml-64  ">{children}</main>
-      </div>
-    </ModalProvider>
+    <AppUserProvider>
+      <ModalProvider>
+        <div className="flex max-h-screen md:flex-row ">
+          <SideBar />
+          <main className="h-full w-full md:ml-64  ">{children}</main>
+        </div>
+      </ModalProvider>
+    </AppUserProvider>
   );
 };
 

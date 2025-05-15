@@ -1,17 +1,56 @@
 "use client";
-import React, { useContext } from "react";
+import React, { useContext, useEffect } from "react";
 import { GrAdd, GrTrain } from "react-icons/gr";
 import AppBar from "./AppBar";
 import TransactionsCard from "./TransactionsCard";
 import Modal from "./Modal";
 import { ModalContext } from "../data/context/ModalContext";
+import { Transaction, TransactionResponse } from "../types/apiTypes";
+import { fetchClient } from "../utils/fetchClient";
+import { AuthContext } from "../data/context/authContext";
 
 const TransactionPage = () => {
   const data = useContext(ModalContext);
+  const [transactions, setTransactions] = React.useState<Transaction[]>([]);
+  const [loading, setLoading] = React.useState(false);
+  const authContext = useContext(AuthContext);
+  if (!authContext) {
+    throw new Error("AuthContext is not defined");
+  }
+
   if (data === undefined) {
     throw new Error("useModalContext must be used within a ModalProvider");
   }
   const { openModal } = data;
+
+  useEffect(() => {
+    const fetchTransactions = async () => {
+      setLoading(true);
+      const response = await fetchClient<TransactionResponse>(
+        "/api/v1/users/get/transactions",
+        { page: 0, size: 10 },
+        "POST",
+        true,
+        authContext.token.token
+      );
+      setLoading(false);
+      if (response.error) {
+        alert(response.error);
+        return;
+      }
+      if (response.message) {
+        setTransactions(response.transactions);
+      }
+    };
+    fetchTransactions();
+  }, []);
+  if (loading) {
+    return (
+      <div className="flex h-screen mx-auto items-center  w-[70%] md:w-1/2">
+        <p className="text-gray-500">Loading...</p>
+      </div>
+    );
+  }
 
   return (
     <>
@@ -69,8 +108,8 @@ const TransactionPage = () => {
             </button>
           </div>
           <div className="p-4 md:hidden">
-            {[1, 2, 3, 4, 5, 6, 7].map((_, id) => (
-              <TransactionsCard key={id} />
+            {transactions.map((trx, id) => (
+              <TransactionsCard key={id} transaction={trx} />
             ))}
           </div>
           <div className="bg-white p-4 hidden md:flex md:flex-col">
@@ -94,25 +133,25 @@ const TransactionPage = () => {
                 </tr>
               </thead>
               <tbody>
-                {[1, 2, 3, 4, 5].map((_, id) => (
+                {transactions.map((trx, id) => (
                   <tr
                     key={id}
                     className={`${id % 2 === 0 ? "bg-gray-100" : ""}`}
                   >
                     <td className="p-3 text-sm text-gray-700 border-b-1 border-slate-100">
-                      FOOD
+                      {trx.Title}
                     </td>
                     <td className="p-3 text-sm text-gray-700 border-b-1 border-slate-100">
-                      Supper food
+                      {trx.Description}
                     </td>
                     <td className="p-3 text-sm text-gray-700 border-b-1 border-slate-100">
-                      Bought food for supper
+                      {trx.Amount}
                     </td>
                     <td className="p-3 text-sm text-gray-700 border-b-1 border-slate-100">
-                      889
+                      {trx.Date}
                     </td>
                     <td className="p-3 text-sm text-gray-700 border-b-1 border-slate-100">
-                      17 mar 2025
+                      {trx.Category.Name}
                     </td>
                   </tr>
                 ))}
