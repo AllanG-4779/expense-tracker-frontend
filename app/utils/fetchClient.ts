@@ -2,7 +2,7 @@
 export const fetchClient = async <T = unknown>(
   path: string,
   body: unknown = {},
-  method: "POST" | "PUT" | "PATCH" | "GET" = "POST",
+  method: "POST" | "PUT" | "PATCH" | "GET"|'DELETE' = "POST",
   authenticated: boolean = false,
   token: string = ""
 ): Promise<T> => {

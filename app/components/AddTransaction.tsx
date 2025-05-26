@@ -1,13 +1,19 @@
 "use client";
 import React, { useContext, useEffect } from "react";
 import { GrAdd } from "react-icons/gr";
-import { CategoryResponse, TransactionPayload } from "../types/apiTypes";
+import {
+  CategoryResponse,
+  Transaction,
+  TransactionPayload,
+} from "../types/apiTypes";
 import { fetchClient } from "../utils/fetchClient";
 import { AppUserContext } from "../data/context/AppUserContext";
 import { AuthContext } from "../data/context/authContext";
 
-
-const AddTransaction = () => {
+const AddTransaction: React.FC<{
+  existingTransaction?: Transaction;
+  action?: string;
+}> = ({ existingTransaction, action = "create" }) => {
   const [view, setView] = React.useState("addTransaction");
   const [categories, setCategories] = React.useState<string[]>([]);
   const [category, setNewCategory] = React.useState("");
@@ -15,12 +21,12 @@ const AddTransaction = () => {
   const [loading, setLoading] = React.useState(false);
 
   const [transaction, setTransaction] = React.useState<TransactionPayload>({
-    title: "",
-    amount: 0,
-    category: "",
-    description: "",
-    account_id: 0,
-    date: "",
+    title: existingTransaction?.Title || "",
+    amount: existingTransaction?.Amount || 0,
+    category: existingTransaction?.Category.Name || "",
+    description: existingTransaction?.Description || "",
+    account_id: existingTransaction?.ID || 0,
+    date: existingTransaction?.Date || "",
   });
   const appUserContext = useContext(AppUserContext);
   const authContext = useContext(AuthContext);
@@ -65,6 +71,24 @@ const AddTransaction = () => {
     }
   };
 
+  const updateTransaction = async () => {
+    setLoading(true);
+    const response = await fetchClient<{ message: string }>(
+      "/api/v1/users/update/transaction",
+      transaction,
+      "PUT",
+      true,
+      authContext.token.token
+    );
+    setLoading(false);
+    console.log("Response:", response); // Debugging line
+    if (response.message) {
+      alert(response.message);
+      setNewCategory("");
+      setView("addTransaction");
+    }
+  };
+ 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === "Escape") {
@@ -92,13 +116,15 @@ const AddTransaction = () => {
     };
   }, []);
   return (
-    <div className="flex flex-col p-5 bg-white rounded-lg shadow-md max-w-md mx-auto md:max-w-[50%] md:mx-auto">
+    <div className="flex flex-col p-5 bg-white rounded-lg shadow-md max-w-md mx-auto w-full md:mx-auto">
       {view === "addTransaction" ? (
         <form
           className="flex flex-col gap-3 mt-5"
           onSubmit={(e) => e.preventDefault()}
         >
-          <h1 className="text-2xl font-bold text-[#dc4b3e]">Add Transaction</h1>
+          <h1 className="text-2xl font-bold text-[#dc4b3e]">
+            {action === "create" ? "Add Transaction" : "Update Transaction"}
+          </h1>
           <input
             type="text"
             placeholder="Title"
@@ -123,7 +149,7 @@ const AddTransaction = () => {
           <div className="flex flex-row gap-3 w-full items-center">
             <select
               value={transaction.category}
-              className="p-2   rounded-md outline-none border-none flex-1/2"
+              className="p-2 rounded-md outline-none border-none flex-1/2"
               onChange={(e) =>
                 setTransaction({ ...transaction, category: e.target.value })
               }
@@ -185,9 +211,13 @@ const AddTransaction = () => {
           />
           <button
             className="bg-[#dc4b3e] text-white p-2 rounded-md mt-3"
-            onClick={newTransaction}
+            onClick={action === "create" ? newTransaction : updateTransaction}
           >
-            {loading ? "Adding..." : "Add Transaction"}
+            {loading
+              ? "Adding..."
+              : action === "create"
+              ? "Add Transaction"
+              : "Update Transaction"}
           </button>
         </form>
       ) : (
