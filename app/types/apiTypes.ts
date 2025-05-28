@@ -152,3 +152,11 @@ export type Transaction = {
     Description: string;
   };
 };
+export type TransactionFilter = {
+  page: number;
+  size: number;
+  account_id: number;
+  type?: "income" | "expense";
+  start_date?: string;
+  end_date?: string;
+};

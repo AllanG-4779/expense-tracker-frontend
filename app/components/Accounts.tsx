@@ -7,9 +7,10 @@ import { FaWallet } from "react-icons/fa";
 import TableComponent from "./TableComponent";
 import { fetchClient } from "../utils/fetchClient";
 import { AuthContext } from "../data/context/authContext";
-import { AccountResponse } from "../types/apiTypes";
+
 import { AppUserContext } from "../data/context/AppUserContext";
 import Modal from "./Modal";
+import { ShimmerTable } from "react-shimmer-effects";
 
 const Accounts = () => {
   const [loading, setLoading] = React.useState(false);
@@ -19,39 +20,16 @@ const Accounts = () => {
   if (!authContext || !appUserContext) {
     throw new Error("AuthContext is not defined");
   }
-  React.useEffect(() => {
-    if (authContext.refreshAuth !== undefined) {
-      authContext.refreshAuth();
-    }
-    const fetchAccounts = async () => {
-      setLoading(true);
-      const response = await fetchClient<AccountResponse>(
-        "/api/v1/users/get/accounts",
-        {},
-        "GET",
-        true,
-        authContext.token.token
-      );
-      console.log("Response:", response); // Debugging line
-      setLoading(false);
-      if (response.accounts && response.accounts.length > 0) {
-        console.log("Accounts fetched successfully:", response.accounts);
 
-        appUserContext.setAccounts(response.accounts);
-      } else {
-        console.log("Accounts fetched successfully:", response.message);
-        appUserContext.setAccounts([]);
-      }
-    };
-    fetchAccounts();
-  }, []);
-  if (loading) {
-    return (
-      <div className="flex justify-center items-center h-screen">
-        <p>Loading...</p>
-      </div>
-    );
-  }
+  const filterAccountTransactions = async (accountId: number) => {
+    setLoading(true);
+    await appUserContext.fetchTransactions!(authContext.token.token, {
+      page: 0,
+      size: 100,
+      account_id: accountId,
+    });
+    setLoading(false);
+  };
 
   return (
     <>
@@ -59,9 +37,11 @@ const Accounts = () => {
       {appUserContext.accounts.length > 0 ? (
         <div className="p-2 flex flex-col md:w-10/12 md:mx-auto">
           <p>Current active Accounts</p>
-          <div className="flex flex-col md:flex-row gap-2 mt-5 justify-between md:items-center w-full md:mx-auto flex-wrap">
+          <div className="flex flex-col md:flex-row gap-10 mt-5 md:items-center w-full md:mx-auto flex-wrap">
             {appUserContext.accounts.map((account) => (
               <AccountsCard
+                id={account.ID}
+                update={async () => await filterAccountTransactions(account.ID)}
                 key={account.ID}
                 name={account.Name}
                 opening={account.Balance}
@@ -71,7 +51,22 @@ const Accounts = () => {
             ))}
           </div>
           <div className="mt-5">
-            <TableComponent />
+            {loading ? (
+              <p>Loading...</p>
+            ) : (
+              <TableComponent
+                transactions={appUserContext.transactions!}
+                accounts={appUserContext.accounts!}
+                fetchTransactions={async () =>
+                  await appUserContext.fetchTransactions!(
+                    authContext.token.token
+                  )
+                }
+                deleteTrasaction={async (id: number) =>
+                  await appUserContext.deleteTransaction!(id)
+                }
+              />
+            )}
           </div>
         </div>
       ) : (
@@ -135,3 +130,23 @@ const AddAccount: React.FC<{ token: string }> = ({ token }) => {
     </div>
   );
 };
+
+const LoadingSkeleton = () => (
+  <div className="bg-white rounded-lg shadow p-6 animate-pulse">
+    <div className="h-6 bg-gray-200 rounded w-1/4 mb-4"></div>
+    <div className="space-y-3">
+      {[...Array(5)].map((_, index) => (
+        <div
+          key={index}
+          className="flex justify-between items-center p-3 border rounded"
+        >
+          <div className="flex-1">
+            <div className="h-4 bg-gray-200 rounded w-3/4 mb-2"></div>
+            <div className="h-3 bg-gray-200 rounded w-1/2"></div>
+          </div>
+          <div className="h-8 bg-gray-200 rounded w-16"></div>
+        </div>
+      ))}
+    </div>
+  </div>
+);
