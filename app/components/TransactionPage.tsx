@@ -21,7 +21,7 @@ const TransactionPage = () => {
   const appUserContext = useContext(AppUserContext);
   const [alertStatus, setAlertStatus] = React.useState(false);
 
-  const [message, setMessage] = React.useState<{
+  const [message] = React.useState<{
     message: string;
     type: string;
   } | null>();
