@@ -58,38 +58,37 @@ const TransactionPage = () => {
     }, 3000);
   };
 
+  const fetchTransactions = async () => {
+    setLoading(true);
+    console.log(
+      "Fetching transactions... with token ",
+      authContext.token.token
+    );
+    const response = await fetchClient<TransactionResponse>(
+      "/api/v1/users/get/transactions",
+      { page: 0, size: 10 },
+      "POST",
+      true,
+      authContext.token.token
+    );
+    setLoading(false);
+    if (!response) {
+      setMessage({
+        message: "Failed to fetch transactions",
+        type: "success",
+      });
+      setAlertStatus(true);
+    }
+    if (response.error) {
+      return;
+    }
+    if (response.message) {
+      setTransactions(response.transactions);
+    }
+  };
   useEffect(() => {
-    const fetchTransactions = async () => {
-      setLoading(true);
-      const response = await fetchClient<TransactionResponse>(
-        "/api/v1/users/get/transactions",
-        { page: 0, size: 10 },
-        "POST",
-        true,
-        authContext.token.token
-      );
-      setLoading(false);
-      if (!response) {
-        setMessage({
-          message: "Failed to fetch transactions",
-          type: "success",
-        });
-        setAlertStatus(true);
-        setTimeout(() => {
-          setAlertStatus(false);
-        }, 3000);
-        return;
-      }
-      if (response.error) {
-        return;
-      }
-      if (response.message) {
-        setTransactions(response.transactions);
-      }
-    };
-
     fetchTransactions();
-  }, [transactions.length, message]);
+  }, [authContext.token.token, modal]);
   if (loading) {
     return (
       <div className="flex h-screen mx-auto items-center  w-[70%] md:w-1/2">
@@ -102,18 +101,19 @@ const TransactionPage = () => {
     <>
       <AppBar title="Transactions" icon={<GrTrain />} />
 
-      <div className="p-4  md:flex flex-col gap-5 ">
-        {message && (
-          <Alert
-            title="Request status!"
-            message={message?.message}
-            type={message.type}
-            open={alertStatus}
-            setOpen={setAlertStatus}
-          />
-        )}
-        {/*Filters*/}
-        {/* <p className="font-bold text-xl ">Summary</p>
+      {transactions && transactions.length > 0 ? (
+        <div className="p-4  md:flex flex-col gap-5 ">
+          {message && (
+            <Alert
+              title="Request status!"
+              message={message?.message}
+              type={message.type}
+              open={alertStatus}
+              setOpen={setAlertStatus}
+            />
+          )}
+          {/*Filters*/}
+          {/* <p className="font-bold text-xl ">Summary</p>
         <div className="w-full m:w-[65%] md:mx-auto mb-5 justify-around flex flex-col md:flex-row gap-5 items-center ">
           <CardComponent
             name="Total"
@@ -134,27 +134,124 @@ const TransactionPage = () => {
             currency="KES"
           />
         </div> */}
-        <div className="flex flex-col gap-2 bg-white rounded-lg p-5">
-          <div className="flex flex-row w-full justify-between">
-            <div className="flex flex-col md:flex-row gap-2 md:items-center">
-              <span className="text-gray-700 font-semibold">Filters:</span>
-              <div className="flex  md:flex-row gap-5 items-center">
-                <p>Category</p>
-                <select className="border border-gray-300 rounded-md p-2">
-                  <option value="all">All</option>
-                  <option value="income">Income</option>
-                  <option value="expense">Expense</option>
-                </select>
-                <p>Date</p>
-                <select className="border border-gray-300 rounded-md p-2">
-                  <option value="all">All</option>
-                  <option value="today">Today</option>
-                  <option value="this_week">This Week</option>
-                  <option value="this_month">This Month</option>
-                  <option value="this_year">This Year</option>
-                </select>
-              </div>{" "}
+          <div className="flex flex-col gap-2 bg-white rounded-lg p-5">
+            <div className="flex flex-row w-full justify-between">
+              <div className="flex flex-col md:flex-row gap-2 md:items-center">
+                <span className="text-gray-700 font-semibold">Filters:</span>
+                <div className="flex  md:flex-row gap-5 items-center">
+                  <p>Category</p>
+                  <select className="border border-gray-300 rounded-md p-2">
+                    <option value="all">All</option>
+                    <option value="income">Income</option>
+                    <option value="expense">Expense</option>
+                  </select>
+                  <p>Date</p>
+                  <select className="border border-gray-300 rounded-md p-2">
+                    <option value="all">All</option>
+                    <option value="today">Today</option>
+                    <option value="this_week">This Week</option>
+                    <option value="this_month">This Month</option>
+                    <option value="this_year">This Year</option>
+                  </select>
+                </div>{" "}
+              </div>
+              <button
+                onClick={() => updateModal(true)}
+                className="bg-[#dc4b3e] md:flex hidden text-white font-bold  rounded-md p-2   items-center gap-2"
+              >
+                <GrAdd /> <span className="d">Add transaction</span>
+              </button>
             </div>
+            <div className="p-4 md:hidden">
+              {transactions &&
+                transactions.map((trx, id) => (
+                  <TransactionsCard key={id} transaction={trx} />
+                ))}
+            </div>
+            <div className="bg-white p-4 hidden md:flex md:flex-col">
+              <p className="font-bold text-xl mb-4">Transactions</p>
+              <table className="w-full border-collapse  table-auto">
+                <thead>
+                  <tr>
+                    <th className="tracking-wider text-left p-3 text-sm">
+                      Title
+                    </th>
+                    <th className="tracking-wider text-left p-3 text-sm">
+                      Description
+                    </th>
+                    <th className="tracking-wider text-left p-3 text-sm">
+                      Amount
+                    </th>
+                    <th className="tracking-wider text-left p-3 text-sm">
+                      Date
+                    </th>
+                    <th className="tracking-wider text-left p-3 text-sm">
+                      Category
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {transactions &&
+                    transactions.map((trx) => (
+                      <tr
+                        key={trx.ID}
+                        className={`${trx.ID % 2 === 0 ? "bg-gray-100" : ""}`}
+                      >
+                        <td className="p-3 text-sm text-gray-700 border-b-1 border-slate-100">
+                          {trx.Title}
+                        </td>
+                        <td className="p-3 text-sm text-gray-700 border-b-1 border-slate-100">
+                          {trx.Description}
+                        </td>
+                        <td className="p-3 text-sm text-gray-700 border-b-1 border-slate-100">
+                          {trx.Amount}
+                        </td>
+                        <td className="p-3 text-sm text-gray-700 border-b-1 border-slate-100">
+                          {trx.Date}
+                        </td>
+                        <td className="p-3 text-sm text-gray-700 border-b-1 border-slate-100">
+                          {trx.Category.Name}
+                        </td>
+                        <td
+                          className="p-3 t`ext-sm text-gray-700 border-b-1 border-slate-100 cursor-pointer relative"
+                          onClick={() => setOpen(true)}
+                          onMouseLeave={() => setOpen(false)}
+                        >
+                          {
+                            <MdMoreVert
+                              className="text-2xl"
+                              onClick={() => setActive(trx)}
+                            />
+                          }
+                          {active?.ID === trx.ID && (
+                            <CardComponent
+                              updater={setOpen}
+                              open={open}
+                              transaction={trx}
+                              transactionId={trx.ID}
+                              onDelete={deleteTransaction}
+                              refreshTransactions={fetchTransactions}
+                            />
+                          )}
+                        </td>
+                      </tr>
+                    ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <Modal status={modal} updater={updateModal}>
+            <AddTransaction
+              onSuccess={() => {
+                updateModal(false);
+                fetchTransactions();
+              }}
+            />
+          </Modal>
+        </div>
+      ) : (
+        <div>
+          <div className="flex justify-center items-center h-screen">
             <button
               onClick={() => updateModal(true)}
               className="bg-[#dc4b3e] md:flex hidden text-white font-bold  rounded-md p-2   items-center gap-2"
@@ -162,83 +259,15 @@ const TransactionPage = () => {
               <GrAdd /> <span className="d">Add transaction</span>
             </button>
           </div>
-          <div className="p-4 md:hidden">
-            {transactions.map((trx, id) => (
-              <TransactionsCard key={id} transaction={trx} />
-            ))}
-          </div>
-          <div className="bg-white p-4 hidden md:flex md:flex-col">
-            <p className="font-bold text-xl mb-4">Transactions</p>
-            <table className="w-full border-collapse  table-auto">
-              <thead>
-                <tr>
-                  <th className="tracking-wider text-left p-3 text-sm">
-                    Title
-                  </th>
-                  <th className="tracking-wider text-left p-3 text-sm">
-                    Description
-                  </th>
-                  <th className="tracking-wider text-left p-3 text-sm">
-                    Amount
-                  </th>
-                  <th className="tracking-wider text-left p-3 text-sm">Date</th>
-                  <th className="tracking-wider text-left p-3 text-sm">
-                    Category
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                {transactions.map((trx) => (
-                  <tr
-                    key={trx.ID}
-                    className={`${trx.ID % 2 === 0 ? "bg-gray-100" : ""}`}
-                  >
-                    <td className="p-3 text-sm text-gray-700 border-b-1 border-slate-100">
-                      {trx.Title}
-                    </td>
-                    <td className="p-3 text-sm text-gray-700 border-b-1 border-slate-100">
-                      {trx.Description}
-                    </td>
-                    <td className="p-3 text-sm text-gray-700 border-b-1 border-slate-100">
-                      {trx.Amount}
-                    </td>
-                    <td className="p-3 text-sm text-gray-700 border-b-1 border-slate-100">
-                      {trx.Date}
-                    </td>
-                    <td className="p-3 text-sm text-gray-700 border-b-1 border-slate-100">
-                      {trx.Category.Name}
-                    </td>
-                    <td
-                      className="p-3 t`ext-sm text-gray-700 border-b-1 border-slate-100 cursor-pointer relative"
-                      onClick={() => setOpen(true)}
-                      onMouseLeave={() => setOpen(false)}
-                    >
-                      {
-                        <MdMoreVert
-                          className="text-2xl"
-                          onClick={() => setActive(trx)}
-                        />
-                      }
-                      {active?.ID === trx.ID && (
-                        <CardComponent
-                          updater={setOpen}
-                          open={open}
-                          transaction={trx}
-                          transactionId={trx.ID}
-                          onDelete={deleteTransaction}
-                        />
-                      )}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+          <Modal status={modal} updater={updateModal}>
+            <AddTransaction
+              onSuccess={() => {
+                updateModal(false);
+              }}
+            />
+          </Modal>
         </div>
-        <Modal status={modal} updater={updateModal}>
-          <AddTransaction />
-        </Modal>
-      </div>
+      )}
     </>
   );
 };
@@ -248,8 +277,16 @@ const CardComponent: React.FC<{
   open: boolean;
   transaction?: Transaction;
   transactionId: number;
+  refreshTransactions?: () => void;
   onDelete: (id: number) => void;
-}> = ({ open, updater, transaction, onDelete, transactionId }) => {
+}> = ({
+  open,
+  updater,
+  transaction,
+  onDelete,
+  transactionId,
+  refreshTransactions,
+}) => {
   const [modal, setModal] = React.useState(false);
 
   return (
@@ -266,7 +303,14 @@ const CardComponent: React.FC<{
       </p>
       <p onClick={() => onDelete(transactionId)}>Delete</p>
       <Modal status={modal} updater={setModal}>
-        <AddTransaction existingTransaction={transaction} action="update" />
+        <AddTransaction
+          existingTransaction={transaction}
+          action="update"
+          onSuccess={() => {
+            setModal(false);
+            refreshTransactions!();
+          }}
+        />
       </Modal>
     </div>
   );

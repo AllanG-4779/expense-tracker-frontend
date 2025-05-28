@@ -5,7 +5,7 @@ import Link from "next/link";
 import { LoginUser, LoginUserResponse } from "../types/apiTypes";
 import { fetchClient } from "../utils/fetchClient";
 import Alert from "./raw/Alert";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { AuthContext } from "../data/context/authContext";
 
 const LoginScreen = () => {
@@ -16,6 +16,7 @@ const LoginScreen = () => {
   const router = useRouter();
   const [loading, setLoading] = React.useState(false);
   const [message, setMessage] = React.useState("");
+  const searchParams = useSearchParams();
   const [type, setType] = React.useState("success");
   const authContext = React.useContext(AuthContext);
   if (!authContext) {
@@ -49,8 +50,9 @@ const LoginScreen = () => {
         });
       }
       console.log("User logged in:", authContext); // Debugging line
-
-      router.push("/account/user/accounts");
+      const prev = searchParams.get("redirect")!== null ? searchParams.get("redirect")! : "/account/expenses";
+      router.push( prev);
+      return;
     }
   };
   return (

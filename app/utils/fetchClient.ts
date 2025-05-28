@@ -16,7 +16,9 @@ export const fetchClient = async <T = unknown>(
   }
 
   if (authenticated && !token) {
+    // localStorage.clear();
     throw new Error("Missing token for protected route");
+   
   }
   const headers: HeadersInit = authenticated
     ? {

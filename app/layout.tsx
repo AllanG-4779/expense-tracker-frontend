@@ -3,6 +3,7 @@ import { Poppins } from "next/font/google";
 
 import "./globals.css";
 import AuthProvider from "./data/context/authContext";
+import AppUserProvider from "./data/context/AppUserContext";
 
 const geistSans = Poppins({
   subsets: ["latin"],
@@ -22,7 +23,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <AuthProvider>
-        <body className={geistSans.className}>{children}</body>
+        <AppUserProvider>
+          <body className={geistSans.className}>{children}</body>
+        </AppUserProvider>
       </AuthProvider>
     </html>
   );

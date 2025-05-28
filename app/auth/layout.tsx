@@ -1,19 +1,30 @@
 "use client";
-import React, { ReactNode, useContext } from "react";
+import React, { ReactNode, useContext, useEffect } from "react";
 import { AuthContext } from "../data/context/authContext";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 
 const AuthLayout = ({ children }: { children: ReactNode }) => {
   const authContext = useContext(AuthContext);
-  const router = useRouter();
+  const router = useRouter(); 
+   const search = useSearchParams();
   if (authContext === undefined) {
     throw new Error("useAuthContext must be used within an AuthProvider");
   }
-  const { isAuthenticated } = authContext;
+  useEffect(() => {
+    const { isAuthenticated } = authContext;
   
-  if (isAuthenticated) {
-    router.push("/account/expenses");
-  }
+    const redirect = search.get("redirect");
+    if (redirect) {
+      if (isAuthenticated) {
+        router.push(redirect);
+        return;
+      }
+
+      if (isAuthenticated) {
+        router.push("/account/expenses");
+      }
+    }
+  }, []);
 
   return (
     <div className="flex h-full flex-col items-center m-20">

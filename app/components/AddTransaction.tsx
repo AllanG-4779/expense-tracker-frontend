@@ -13,7 +13,8 @@ import { AuthContext } from "../data/context/authContext";
 const AddTransaction: React.FC<{
   existingTransaction?: Transaction;
   action?: string;
-}> = ({ existingTransaction, action = "create" }) => {
+  onSuccess?: () => void;
+}> = ({ existingTransaction, action = "create", onSuccess }) => {
   const [view, setView] = React.useState("addTransaction");
   const [categories, setCategories] = React.useState<string[]>([]);
   const [category, setNewCategory] = React.useState("");
@@ -25,8 +26,9 @@ const AddTransaction: React.FC<{
     amount: existingTransaction?.Amount || 0,
     category: existingTransaction?.Category.Name || "",
     description: existingTransaction?.Description || "",
-    account_id: existingTransaction?.ID || 0,
-    date: existingTransaction?.Date || "",
+    account_id: existingTransaction?.AccountID || 0,
+    transaction_id: existingTransaction?.ID || 0,
+    date: existingTransaction?.Date.split("T")[0] || "",
   });
   const appUserContext = useContext(AppUserContext);
   const authContext = useContext(AuthContext);
@@ -69,6 +71,7 @@ const AddTransaction: React.FC<{
       setNewCategory("");
       setView("addTransaction");
     }
+    onSuccess?.();
   };
 
   const updateTransaction = async () => {
@@ -87,8 +90,9 @@ const AddTransaction: React.FC<{
       setNewCategory("");
       setView("addTransaction");
     }
+    onSuccess?.();
   };
- 
+
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === "Escape") {
@@ -114,7 +118,7 @@ const AddTransaction: React.FC<{
     return () => {
       window.removeEventListener("keydown", handleKeyDown);
     };
-  }, []);
+  }, [loading]);
   return (
     <div className="flex flex-col p-5 bg-white rounded-lg shadow-md max-w-md mx-auto w-full md:mx-auto">
       {view === "addTransaction" ? (
@@ -154,10 +158,13 @@ const AddTransaction: React.FC<{
                 setTransaction({ ...transaction, category: e.target.value })
               }
             >
+              <option value="">Select Category</option>
               {categories.length > 0 ? (
                 categories.map((category, index) => (
                   <option key={index} value={category}>
-                    {category}
+                    {`${category} - ${
+                      type === "expense" ? "Expense" : "Income"
+                    }`}
                   </option>
                 ))
               ) : (
@@ -193,6 +200,7 @@ const AddTransaction: React.FC<{
                 })
               }
             >
+              <option value="">Select Account</option>
               {appUserContext.accounts.map((account, index) => (
                 <option key={index} value={account.ID}>
                   {account.Name}
@@ -210,6 +218,7 @@ const AddTransaction: React.FC<{
             placeholder="Date"
           />
           <button
+            disabled={loading}
             className="bg-[#dc4b3e] text-white p-2 rounded-md mt-3"
             onClick={action === "create" ? newTransaction : updateTransaction}
           >

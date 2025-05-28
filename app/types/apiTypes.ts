@@ -121,6 +121,7 @@ export type TransactionPayload = {
   title: string;
   date: string;
   description: string;
+  transaction_id: number;
   category: string;
   account_id: number;
 };
