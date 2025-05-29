@@ -2,7 +2,7 @@
 export const fetchClient = async <T = unknown>(
   path: string,
   body: unknown = {},
-  method: "POST" | "PUT" | "PATCH" | "GET"|'DELETE' = "POST",
+  method: "POST" | "PUT" | "PATCH" | "GET" | "DELETE" = "POST",
   authenticated: boolean = false,
   token: string = ""
 ): Promise<T> => {
@@ -17,8 +17,12 @@ export const fetchClient = async <T = unknown>(
 
   if (authenticated && !token) {
     // localStorage.clear();
-    throw new Error("Missing token for protected route");
-   
+    const lToken = JSON.parse(localStorage.getItem("token") || "{}");
+    if (!lToken) {
+      throw new Error("No token found for authenticated request");
+    }
+    console.log("Using token from localStorage:", lToken); // Debugging line
+    token = lToken.token || lToken.accessToken || lToken.token;
   }
   const headers: HeadersInit = authenticated
     ? {

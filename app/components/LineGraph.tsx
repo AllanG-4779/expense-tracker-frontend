@@ -6,25 +6,26 @@ import {
   PointElement,
   LinearScale,
   Title,
+  BarElement,
   Tooltip,
   LineElement,
 } from "chart.js";
 
 import { Line } from "react-chartjs-2";
-import { getGraphData } from "../data/static";
+import { GraphDataItem } from "../types/apiTypes";
 
 ChartJS.register(
   CategoryScale,
   PointElement,
   LinearScale,
   Title,
-  Tooltip,
-  LineElement
+  LineElement,
+  BarElement,
+  Tooltip
 );
 
-const ExpenseTag = () => {
+const ExpenseTag: React.FC<{ data?: GraphDataItem[] }> = ({ data }) => {
   const [parameter, setParameter] = useState("weekly");
-  const options = {};
 
   return (
     <div className="flex flex-col gap-4 max-w-full bg-white p-4 rounded-lg">
@@ -57,41 +58,38 @@ const ExpenseTag = () => {
           </ul>
         </div>
       </div>
-      <Line
-        data={getGraphData(
-          parameter,
-          parameter === "weekly"
-            ? weeklyData()
-            : parameter === "monthly"
-            ? monthlyData()
-            : yearlyData()
-        )}
-        options={options}
-      />
+      <Line data={getExpenseGraphData("", data)} />
     </div>
   );
 };
 
 export default ExpenseTag;
 
-const monthlyData = () => {
-  const data = [];
-  for (let i = 0; i < new Date().getDate(); i++) {
-    data.push(Math.floor(Math.random() * 1000));
-  }
-  return data;
-};
-const weeklyData = () => {
-  const data = [];
-  for (let i = 0; i < 7; i++) {
-    data.push(Math.floor(Math.random() * 1000));
-  }
-  return data;
-};
-const yearlyData = () => {
-  const data = [];
-  for (let i = 0; i < 12; i++) {
-    data.push(Math.floor(Math.random() * 1000));
-  }
-  return data;
+export const getExpenseGraphData = (
+  parameter: string,
+  data?: GraphDataItem[]
+) => {
+  return {
+    labels: data!.map((item) => item.date.substring(0, 10)), // Assuming date is in YYYY-MM-DD format
+    datasets: [
+      {
+        label: "Income",
+        data: data!
+          .filter((each) => each.type == "income")
+          .map((item) => item.amount),
+        borderColor: "rgba(34, 197, 94, 0.2)",
+        backgroundColor: "rgba(34, 197, 94, 0.5)",
+        fill: true,
+      },
+      {
+        label: "Expenses",
+        data: data!
+          .filter((each) => each.type == "expense")
+          .map((item) => item.amount),
+        borderColor: "rgba(239, 68, 68, 0.2)",
+        backgroundColor: "rgba(239, 68, 68, 0.5)",
+        fill: true,
+      },
+    ],
+  };
 };

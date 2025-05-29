@@ -110,8 +110,14 @@ const AppUserProvider = ({ children }: { children: React.ReactNode }) => {
     }
     const token = authContext.token?.token;
     if (!token) {
-      console.error("No token found in auth context");
-      return;
+      const iToken = JSON.parse(localStorage.getItem("token") || "{}");
+      if (iToken && iToken.token) {
+        console.log("Using token from localStorage:", iToken.token);
+        authContext.token = iToken;
+      } else {
+        console.error("No token found in AuthContext or localStorage");
+        return;
+      }
     }
 
     // Fetch accounts and transactions when the component mounts

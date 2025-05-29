@@ -160,3 +160,23 @@ export type TransactionFilter = {
   start_date?: string;
   end_date?: string;
 };
+export interface GraphDataItem {
+  date: string; // ISO date string
+  usage: number;
+  amount: number;
+  type: "income" | "expense";
+  totals: number;
+}
+
+export interface DashboardData {
+  total_income: number;
+  total_expense: number;
+  total_balance: number;
+  total_transactions: number;
+  graph_data: GraphDataItem[];
+}
+
+export interface DashboardResponse {
+  data: DashboardData;
+  message: string;
+}
