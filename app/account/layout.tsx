@@ -46,31 +46,22 @@ const AccountLayout = ({ children }: { children: ReactNode }) => {
     if (authContext.refreshAuth !== undefined) {
       authContext.refreshAuth();
     }
-    if (authContext.isAuthenticated === false) {
+    if (!authContext.isAuthenticated) {
       router.push("/auth/signin?redirect=" + currentPath);
       return;
     }
     if (appUserContext.accounts.length === 0) {
-      fetchAccounts();
+       fetchAccounts()
+           .then (()=>{
+            console.log("Accounts fetched and set in context");
+           })
+        .catch((error) => {
+          console.error("Error fetching accounts:", error);
+        });
     }
   }, []);
 
-  // console.log("isAuthenticated", authContext);
-  // if (!authContext.isAuthenticated) {
-  //   console.log("User is not authenticated");
-  //   setTimeout(() => {
-  //     router.push("/auth/signin");
-  //   }, 2000);
-  //   return (
-  //     <div className="flex h-screen mx-auto items-center  w-[70%] md:w-1/2">
-  //       <Alert
-  //         title="Logging you out"
-  //         message="Redirecting to login page"
-  //         type="failed"
-  //       />
-  //     </div>
-  //   );
-  // }
+
 
   return (
     <ModalProvider>
