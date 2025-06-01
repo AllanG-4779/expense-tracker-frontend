@@ -4,6 +4,7 @@ import { Poppins } from "next/font/google";
 import "./globals.css";
 import AuthProvider from "./data/context/authContext";
 import AppUserProvider from "./data/context/AppUserContext";
+import React from "react";
 
 const geistSans = Poppins({
   subsets: ["latin"],
