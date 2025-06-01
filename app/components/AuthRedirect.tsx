@@ -1,8 +1,8 @@
 'use client';
 
-import { useContext, useEffect } from 'react';
-import { AuthContext } from '../data/context/authContext';
-import { useRouter, useSearchParams } from 'next/navigation';
+import {Suspense, useContext, useEffect} from 'react';
+import {AuthContext} from '../data/context/authContext';
+import {useRouter, useSearchParams} from 'next/navigation';
 
 const AuthClientRedirect = () => {
     const authContext = useContext(AuthContext);
@@ -14,7 +14,7 @@ const AuthClientRedirect = () => {
         if (!authContext) {
             throw new Error('AuthContext is not defined');
         }
-        const { isAuthenticated } = authContext;
+        const {isAuthenticated} = authContext;
         const redirect = search.get('redirect');
 
         if (redirect && isAuthenticated) {
@@ -27,4 +27,8 @@ const AuthClientRedirect = () => {
     return null; // nothing to render
 };
 
-export default AuthClientRedirect;
+export const RedirectWrapper = () => {
+    return <Suspense fallback={<div>Loading...</div>}>
+        <AuthClientRedirect/>
+    </Suspense>
+}
