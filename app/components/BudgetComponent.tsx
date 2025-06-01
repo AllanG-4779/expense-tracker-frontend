@@ -1,4 +1,4 @@
-import { format } from "date-fns";
+
 import React from "react";
 
 const BudgetComponent: React.FC<{
@@ -8,7 +8,7 @@ const BudgetComponent: React.FC<{
   expenditure: number;
   start: string;
   end: string;
-}> = ({ name, category, expenditure, allocation, start, end }) => {
+}> = ({ name, category, expenditure, allocation, end }) => {
   const expenditurePercent = (expenditure / allocation) * 100;
   const bgColor =
     expenditurePercent < 50
@@ -52,9 +52,9 @@ const BudgetComponent: React.FC<{
       <div className="mt-5 flex flex-col gap-4">
         <div className="flex gap-2 items-center">
           <p className="text-sm text-slate-400">
-            {format(new Date(start), "MMM d, yyyy")} -{" "}
+            {/*{format(new Date(start), "MMM d, yyyy")} -{" "}*/}
           </p>
-          <p className="text-sm text-slate-400">{format(end, "MMM d, yyyy")}</p>
+          {/*<p className="text-sm text-slate-400">{format(end, "MMM d, yyyy")}</p>*/}
         </div>
         <div>
           <div

@@ -22,7 +22,7 @@ const AuthClientRedirect = () => {
         } else if (isAuthenticated) {
             router.push('/account/expenses');
         }
-    }, []);
+    }, [authContext, router, search]);
 
     return null; // nothing to render
 };

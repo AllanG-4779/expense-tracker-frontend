@@ -22,27 +22,28 @@ const AccountLayout = ({ children }: { children: ReactNode }) => {
 
   // fetch user accounts and save to context
 
-  const fetchAccounts = async () => {
-    const response = await fetchClient<AccountResponse>(
-      "/api/v1/users/get/accounts",
-      {},
-      "GET",
-      true,
-      authContext.token.token
-    );
-    console.log("Response:", response); // Debugging line
-
-    if (response.accounts && response.accounts.length > 0) {
-      console.log("Accounts fetched successfully:", response.accounts);
-
-      appUserContext.setAccounts(response.accounts);
-    } else {
-      console.log("Accounts fetched successfully:", response.message);
-      appUserContext.setAccounts([]);
-    }
-  };
+ 
 
   useEffect(() => {
+    const fetchAccounts = async () => {
+      const response = await fetchClient<AccountResponse>(
+          "/api/v1/users/get/accounts",
+          {},
+          "GET",
+          true,
+          authContext.token.token
+      );
+      console.log("Response:", response); // Debugging line
+
+      if (response.accounts && response.accounts.length > 0) {
+        console.log("Accounts fetched successfully:", response.accounts);
+
+        appUserContext.setAccounts(response.accounts);
+      } else {
+        console.log("Accounts fetched successfully:", response.message);
+        appUserContext.setAccounts([]);
+      }
+    };
     if (authContext.refreshAuth !== undefined) {
       authContext.refreshAuth();
     }
@@ -59,7 +60,7 @@ const AccountLayout = ({ children }: { children: ReactNode }) => {
           console.error("Error fetching accounts:", error);
         });
     }
-  }, []);
+  }, [appUserContext, appUserContext.accounts.length, authContext, currentPath, router]);
 
 
 
