@@ -59,7 +59,7 @@ export const useFetchClient = () => {
                 body: method !== "GET" ? JSON.stringify(body) : undefined,
             });
 
-            if (res.status !== 200) {
+            if (res.status >= 299 || res.status < 200) {
                 return {
                     message: `Request failed with status ${res.status}`,
                     successful: false,
@@ -78,7 +78,7 @@ export const useFetchClient = () => {
             };
 
         } catch (err) {
-            console.error("Fetch error:", err);
+
             return {
                 status: 400,
                 message: `Error fetching data: ${err}`,

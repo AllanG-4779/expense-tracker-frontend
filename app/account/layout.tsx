@@ -22,14 +22,15 @@ const AccountLayout = ({children}: { children: ReactNode }) => {
     }
 
     useEffect(() => {
+        authContext.refreshAuth?.();
         const fetchAccounts = async () => {
-            const localCall = await  fetchClient<AccountResponse>(
+            const localCall = await fetchClient<AccountResponse>(
                 "/api/v1/users/get/accounts",
                 {},
                 "GET",
                 true,
                 authContext.token.token,
-                {showLoader:true}
+                {showLoader: true}
             );
             console.log("Response:", localCall); // Debugging line
             const response = localCall.body!
@@ -42,18 +43,22 @@ const AccountLayout = ({children}: { children: ReactNode }) => {
                 appUserContext.setAccounts([]);
             }
         };
+        // Refresh auth context
+        setTimeout(() => {
+        }, 2000);
         if (!authContext.isAuthenticated) {
+
             router.push("/auth/signin?redirect=" + currentPath);
             return;
         }
 
-            fetchAccounts()
-                .then(() => {
-                    console.log("Accounts fetched and set in context");
-                })
-                .catch((error) => {
-                    console.error("Error fetching accounts:", error);
-                });
+        fetchAccounts()
+            .then(() => {
+                console.log("Accounts fetched and set in context");
+            })
+            .catch((error) => {
+                console.error("Error fetching accounts:", error);
+            });
 
     }, []);
 

@@ -1,6 +1,8 @@
 'use client';
 
 import React from 'react';
+import {BiError} from "react-icons/bi";
+import {IoReload} from "react-icons/io5";
 
 interface ErrorPageProps {
     statusCode?: number;
@@ -20,7 +22,9 @@ const ErrorPage: React.FC<ErrorPageProps> = ({
     const getErrorIcon = () => {
         if (statusCode === 404) {
             return (
-              <div>Hello</div>
+              <div>
+                  <BiError className={"text-red-500 text-8xl "}/>
+              </div>
             );
         }
         return (
@@ -97,12 +101,9 @@ const ErrorPage: React.FC<ErrorPageProps> = ({
                         {onRetry && (
                             <button
                                 onClick={onRetry}
-                                className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-6 rounded-lg transition-colors duration-200 flex items-center justify-center space-x-2"
+                                className="w-full bg-[#dc4b3e] hover:bg-[#dc4b3e] cursor-pointer text-white font-medium py-3 px-6 rounded-lg transition-colors duration-200 flex items-center justify-center space-x-2"
                             >
-                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
-                                          d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
-                                </svg>
+                                <IoReload/>
                                 <span>Try Again</span>
                             </button>
                         )}

@@ -25,8 +25,10 @@ const Expense = () => {
             total_transactions: 0,
         },
     });
-    const [month, setMonth] = React.useState<string>("");
-    const [year, setYear] = React.useState<string>("");
+    const [month, setMonth] = React.useState<string>
+    (new Date().getMonth() + 1 < 10 ? `0${new Date().getMonth() + 1}` : String(new Date().getMonth() + 1));
+
+    const [year, setYear] = React.useState<string>(new Date().getFullYear().toString());
     const [selectedAccount, setSelectedAccount] = React.useState<number>(0);
     const currentDate = new Date();
     const currentMonth = String(currentDate.getMonth() + 1).padStart(2, "0");

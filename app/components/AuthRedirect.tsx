@@ -8,8 +8,6 @@ const AuthClientRedirect = () => {
     const authContext = useContext(AuthContext);
     const router = useRouter();
     const search = useSearchParams();
-
-
     useEffect(() => {
         if (!authContext) {
             throw new Error('AuthContext is not defined');

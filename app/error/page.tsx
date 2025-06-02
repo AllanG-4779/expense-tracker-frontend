@@ -5,7 +5,7 @@ import {useRouter, useSearchParams} from 'next/navigation';
 import ErrorPageComponent from "@/app/components/ErrorPageComponent";
 
 
-export const ErrorPage: React.FC = () => {
+const ErrorPage: React.FC = () => {
     return <Suspense>
         <Wrapper/>
     </Suspense>
@@ -15,7 +15,7 @@ const Wrapper: React.FC = () => {
     const router = useRouter();
     const search = useSearchParams();
     const errorMessage = search.get('message') || 'An unexpected error occurred';
-    const errorCode = parseInt(search.get('code')) || 500;
+    const errorCode = parseInt(search.get('code') as string) || 500;
 
     const handleGoBack = () => {
         router.back();

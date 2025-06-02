@@ -39,8 +39,8 @@ const LoginScreen = () => {
 
     console.log("Response:", response); // Debugging line
     setLoading(false);
-    if (response.error) {
-      setMessage(response.error);
+    if (!loginRes.successful) {
+      setMessage(response?.error || "An error occurred during login");
       setType("error");
     } else {
       setMessage(response.message);
@@ -62,7 +62,7 @@ const LoginScreen = () => {
       <div id="login-section">
         <h1 className="text-4xl font-bold mb-12">Login</h1>
         {!loading && message && message.length > 0 && (
-          <Alert message={message} type={type} title="Login" />
+          <Alert message={message} type={type} title="Login" open={!loading && message.length>0} />
         )}
         <form className="flex flex-col gap-4 w-96" onSubmit={handleSubmit}>
           <Input
