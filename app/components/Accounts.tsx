@@ -5,13 +5,14 @@ import AppBar from "./AppBar";
 import AccountsCard from "./raw/AccountsCard";
 import { FaWallet } from "react-icons/fa";
 import TableComponent from "./TableComponent";
-import { fetchClient } from "../utils/fetchClient";
-import { AuthContext } from "../data/context/authContext";
+import { useFetchClient } from "../utils/fetchClient";
+import { AuthContext } from "@/app/context/authContext";
 
-import { AppUserContext } from "../data/context/AppUserContext";
+import { AppUserContext } from "@/app/context/AppUserContext";
 import Modal from "./Modal";
 
 const Accounts = () => {
+
   const [loading, setLoading] = React.useState(false);
   const authContext = React.useContext(AuthContext);
   const appUserContext = React.useContext(AppUserContext);
@@ -89,6 +90,7 @@ const Accounts = () => {
 export default Accounts;
 
 const AddAccount: React.FC<{ token: string }> = ({ token }) => {
+    const {fetchClient} = useFetchClient();
   const addAccount = async (accountName: string) => {
     const response = await fetchClient<{ message: string; error: string }>(
       "/api/v1/users/activate",

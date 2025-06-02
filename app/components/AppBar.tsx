@@ -1,8 +1,8 @@
 "use client";
 import React, { ReactNode, useContext } from "react";
 import { BiMenu } from "react-icons/bi";
-import { ModalContext } from "../data/context/ModalContext";
-import { AuthContext } from "../data/context/authContext";
+import { ModalContext } from "@/app/context/ModalContext";
+import { AuthContext } from "@/app/context/authContext";
 import Image from "next/image";
 
 const AppBar: React.FC<{ icon?: ReactNode; title: string }> = ({ title }) => {

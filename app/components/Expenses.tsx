@@ -7,9 +7,9 @@ import TableComponent from "./TableComponent";
 import CardComponent from "./CardComponent";
 import {BiMoney} from "react-icons/bi";
 import DoughnutChart from "./raw/DoughnutChart";
-import {AppUserContext} from "../data/context/AppUserContext";
-import {AuthContext} from "../data/context/authContext";
-import {fetchClient} from "../utils/fetchClient";
+import {AppUserContext} from "@/app/context/AppUserContext";
+import {AuthContext} from "@/app/context/authContext";
+import {useFetchClient} from "../utils/fetchClient";
 import {DashboardResponse} from "../types/apiTypes";
 
 const Expense = () => {
@@ -31,6 +31,7 @@ const Expense = () => {
     const currentDate = new Date();
     const currentMonth = String(currentDate.getMonth() + 1).padStart(2, "0");
     const currentYear = String(currentDate.getFullYear());
+    const {fetchClient} = useFetchClient();
     if (month === "") {
         setMonth(currentMonth);
     }
@@ -68,8 +69,8 @@ const Expense = () => {
                 true,
                 authContext!.token.token
             );
-            if (data && data.data) {
-                setDashboard(data);
+            if (data.body && data.body.data) {
+                setDashboard(data.body);
             } else {
                 setDashboard({
                     message: "Failed to fetch dashboard data",
@@ -84,7 +85,6 @@ const Expense = () => {
                 console.log("Failed to fetch dashboard data");
             }
         };
-
         if (authContext.isAuthenticated) {
             setFetchRequest({
                 account_id: selectedAccount || 1,
@@ -96,7 +96,7 @@ const Expense = () => {
 
             appUserContext.fetchTransactions!(authContext.token.token);
         }
-    }, [authContext.isAuthenticated, month, year, selectedAccount, authContext.token.token, appUserContext.fetchTransactions, authContext, fetchRequest]);
+    }, []);
     return (
         <div className="flex flex-col w-full">
             <AppBar title="Expenses" icon={<GrActions/>}/>

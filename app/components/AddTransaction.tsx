@@ -6,9 +6,9 @@ import {
   Transaction,
   TransactionPayload,
 } from "../types/apiTypes";
-import { fetchClient } from "../utils/fetchClient";
-import { AppUserContext } from "../data/context/AppUserContext";
-import { AuthContext } from "../data/context/authContext";
+import { useFetchClient } from "../utils/fetchClient";
+import { AppUserContext } from "@/app/context/AppUserContext";
+import { AuthContext } from "@/app/context/authContext";
 
 const AddTransaction: React.FC<{
   existingTransaction?: Transaction;
@@ -20,7 +20,7 @@ const AddTransaction: React.FC<{
   const [category, setNewCategory] = React.useState("");
   const [type, setType] = React.useState("expense");
   const [loading, setLoading] = React.useState(false);
-
+  const {fetchClient} = useFetchClient();
   const [transaction, setTransaction] = React.useState<TransactionPayload>({
     title: existingTransaction?.Title || "",
     amount: existingTransaction?.Amount || 0,
@@ -40,7 +40,7 @@ const AddTransaction: React.FC<{
   }
 
   const createCategory = async () => {
-    const response = await fetchClient<{ message: string }>(
+    const response =  await fetchClient<{ message: string }>(
       "/api/v1/setup/category",
       { name: category, type: type, description: "" },
       "POST"
@@ -76,7 +76,7 @@ const AddTransaction: React.FC<{
 
   const updateTransaction = async () => {
     setLoading(true);
-    const response = await fetchClient<{ message: string }>(
+    const response = await  fetchClient<{ message: string }>(
       "/api/v1/users/update/transaction",
       transaction,
       "PUT",
@@ -102,11 +102,12 @@ const AddTransaction: React.FC<{
 
     window.addEventListener("keydown", handleKeyDown);
     const fetchCateogories = async () => {
-      const response = await fetchClient<CategoryResponse>(
+      const categoriesRes = await  fetchClient<CategoryResponse>(
         "/api/v1/setup/category/get",
         { page: 0, size: 100 },
         "POST"
       );
+      const response = categoriesRes.body!
       if (response.categories.length > 0) {
         setCategories(response.categories.map((category) => category.Name));
       } else {

@@ -1,7 +1,7 @@
 import React, { useContext } from "react";
 import { Navigation } from "../data/navigation_element";
 import Link from "next/link";
-import { ModalContext } from "../data/context/ModalContext";
+import { ModalContext } from "@/app/context/ModalContext";
 import { MdClose } from "react-icons/md";
 
 

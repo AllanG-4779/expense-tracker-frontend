@@ -3,10 +3,10 @@ import React from "react";
 import Input from "./raw/Input";
 import Link from "next/link";
 import { LoginUser, LoginUserResponse } from "../types/apiTypes";
-import { fetchClient } from "../utils/fetchClient";
+import { useFetchClient } from "../utils/fetchClient";
 import Alert from "./raw/Alert";
 import { useRouter, useSearchParams } from "next/navigation";
-import { AuthContext } from "../data/context/authContext";
+import { AuthContext } from "@/app/context/authContext";
 
 const LoginScreen = () => {
   const [payload, setPayload] = React.useState<LoginUser>({
@@ -19,6 +19,7 @@ const LoginScreen = () => {
   const searchParams = useSearchParams();
   const [type, setType] = React.useState("success");
   const authContext = React.useContext(AuthContext);
+  const {fetchClient} = useFetchClient()
   if (!authContext) {
     throw new Error("AuthContext is not defined");
   }
@@ -29,11 +30,12 @@ const LoginScreen = () => {
       return;
     }
     setLoading(true);
-    const response = await fetchClient<LoginUserResponse>(
+    const loginRes = await  fetchClient<LoginUserResponse>(
       "/api/v1/users/login",
       payload,
       "POST"
     );
+    const response = loginRes.body!
 
     console.log("Response:", response); // Debugging line
     setLoading(false);

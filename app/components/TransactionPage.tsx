@@ -4,15 +4,15 @@ import { GrAdd, GrTrain } from "react-icons/gr";
 import AppBar from "./AppBar";
 import TransactionsCard from "./TransactionsCard";
 import Modal from "./Modal";
-import { ModalContext } from "../data/context/ModalContext";
+import { ModalContext } from "@/app/context/ModalContext";
 import { Transaction } from "../types/apiTypes";
 
-import { AuthContext } from "../data/context/authContext";
+import { AuthContext } from "@/app/context/authContext";
 
 import AddTransaction from "./AddTransaction";
 import Alert from "./raw/Alert";
 import TableComponent from "./TableComponent";
-import { AppUserContext } from "../data/context/AppUserContext";
+import { AppUserContext } from "@/app/context/AppUserContext";
 
 const TransactionPage = () => {
   const data = useContext(ModalContext);

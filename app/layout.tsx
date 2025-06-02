@@ -2,9 +2,11 @@ import type { Metadata } from "next";
 import { Poppins } from "next/font/google";
 
 import "./globals.css";
-import AuthProvider from "./data/context/authContext";
-import AppUserProvider from "./data/context/AppUserContext";
+import AuthProvider from "@/app/context/authContext";
+import AppUserProvider from "@/app/context/AppUserContext";
 import React from "react";
+import {LoaderContextProvider} from "@/app/context/LoaderContext";
+import GlobalLoader from "@/app/components/GlobalLoader";
 
 const geistSans = Poppins({
   subsets: ["latin"],
@@ -23,11 +25,16 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <AuthProvider>
+      <LoaderContextProvider>
+        <AuthProvider>
         <AppUserProvider>
-          <body className={geistSans.className}>{children}</body>
+          <body className={geistSans.className}>
+          <GlobalLoader/>
+          {children}
+          </body>
         </AppUserProvider>
       </AuthProvider>
+      </LoaderContextProvider>
     </html>
   );
 }

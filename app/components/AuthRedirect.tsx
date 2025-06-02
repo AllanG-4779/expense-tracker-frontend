@@ -1,7 +1,7 @@
 'use client';
 
 import {Suspense, useContext, useEffect} from 'react';
-import {AuthContext} from '../data/context/authContext';
+import {AuthContext} from '@/app/context/authContext';
 import {useRouter, useSearchParams} from 'next/navigation';
 
 const AuthClientRedirect = () => {

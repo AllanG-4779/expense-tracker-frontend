@@ -12,7 +12,7 @@ export type AuthContextType = {
   ) => void;
   user: { username: string; email: string };
   token: Token;
-  refreshAuth?: () => boolean;
+  refreshAuth?: () => void;
 };
 
 export const AuthContext = React.createContext<AuthContextType | undefined>(
@@ -27,7 +27,6 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   React.useEffect(() => {
     const token = localStorage.getItem("token");
-
     const user = localStorage.getItem("user");
     if (token && user) {
       setAuthPayload({
@@ -78,7 +77,7 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       localStorage.removeItem("token");
       localStorage.removeItem("user");
     }
-    return authPayload?.isAuthenticated || false;
+
   };
 
   const logout = () => {

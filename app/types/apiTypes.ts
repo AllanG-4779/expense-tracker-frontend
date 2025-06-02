@@ -180,3 +180,10 @@ export interface DashboardResponse {
   data: DashboardData;
   message: string;
 }
+export interface UniversalResponse<T> {
+    message: string;
+    error?: string;
+    status: number;
+    successful: boolean;
+    body?: T;
+}
