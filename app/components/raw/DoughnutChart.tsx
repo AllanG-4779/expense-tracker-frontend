@@ -43,7 +43,7 @@ const SemiCircleDoughnut: React.FC<{
     <div className="flex flex-col items-center  bg-white p-5 rounded-md shadow-md max-w-full">
       <div className="w-95 relative">
         <Doughnut data={data} options={options} />
-        <div className="text-center mt-[-60px] absolute top-[70%] left-[50%] transform translate-x-1/2 -translate-y-1/2">
+        <div className="text-center mt-[-60px] absolute top-[80%] left-[50]  transform translate-x-1/2 -translate-y-1/2">
           <p className="text-gray-500 text-sm">Income</p>
           <p className="text-[#dc4b3e] text-xl font-semibold">
             KES{" "}

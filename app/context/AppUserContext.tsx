@@ -7,7 +7,7 @@ import {
     TransactionResponse,
 } from "@/app/types/apiTypes";
 import {useFetchClient} from "@/app/utils/fetchClient";
-import React, {useEffect} from "react";
+import React, {useCallback, useEffect} from "react";
 import {AuthContext} from "./authContext";
 
 export type AppUserContextType = {
@@ -53,7 +53,7 @@ const AppUserProvider = ({children}: { children: React.ReactNode }) => {
         await fetchTransactions(token);
     };
 
-    const fetchTransactions = async (token: string, body?: TransactionFilter) => {
+    const fetchTransactions = useCallback(async (token: string, body?: TransactionFilter) => {
         const response = await fetchClient<TransactionResponse>(
             "/api/v1/users/filter/transaction",
             body || {page: 0, size: 100},
@@ -70,7 +70,7 @@ const AppUserProvider = ({children}: { children: React.ReactNode }) => {
             console.log("No transactions found:", response.message);
             setTransactions([]);
         }
-    };
+    }, [fetchClient]);
 
     const updateTransaction = async (
         transaction: TransactionPayload,

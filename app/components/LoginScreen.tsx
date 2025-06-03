@@ -26,8 +26,9 @@ const LoginScreen = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!payload.username || !payload.password) {
-      alert("Please fill all fields");
-      return;
+      setMessage("Please fill in all fields");
+        setType("error");
+        return;
     }
     setLoading(true);
     const loginRes = await  fetchClient<LoginUserResponse>(

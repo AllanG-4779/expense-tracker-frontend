@@ -30,10 +30,10 @@ const TableComponent: React.FC<{
         </thead>
         <tbody>
           {transactions &&
-            transactions.map((trx) => (
+            transactions.map((trx, idx) => (
               <tr
                 key={trx.ID}
-                className={`${trx.ID % 2 === 0 ? "bg-gray-100" : ""}`}
+                className={`${idx% 2 === 0 ? "bg-gray-100" : ""}`}
               >
                 <td className="p-3 text-sm text-gray-700 border-b-1 border-slate-100">
                   {trx.Title}

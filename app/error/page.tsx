@@ -20,7 +20,6 @@ const Wrapper: React.FC = () => {
     const handleGoBack = () => {
         router.back();
     };
-
     return <ErrorPageComponent statusCode={errorCode} message={errorMessage} onRetry={handleGoBack}/>
 }
 export default ErrorPage;

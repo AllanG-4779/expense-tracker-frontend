@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, {useCallback} from "react";
 import {GrActions} from "react-icons/gr";
 import AppBar from "./AppBar";
 import LineGraph from "./LineGraph";
@@ -30,29 +30,8 @@ const Expense = () => {
 
     const [year, setYear] = React.useState<string>(new Date().getFullYear().toString());
     const [selectedAccount, setSelectedAccount] = React.useState<number>(0);
-    const currentDate = new Date();
-    const currentMonth = String(currentDate.getMonth() + 1).padStart(2, "0");
-    const currentYear = String(currentDate.getFullYear());
-    const {fetchClient} = useFetchClient();
-    if (month === "") {
-        setMonth(currentMonth);
-    }
-    if (year === "") {
-        setYear(currentYear);
-    }
-    const [fetchRequest, setFetchRequest] = React.useState<
-        | {
-        account_id: number;
-        start_date: string;
-        end_date: string;
-    }
-        | undefined
-    >({
-        account_id: 1,
-        start_date: `${year}-${month}-01`,
-        end_date: `${year}-${month}-${month != "02" ? "30" : "28"}`,
-    });
 
+    const {fetchClient} = useFetchClient();
 
     if (!authContext) {
         throw new Error("AuthContext is not defined");
@@ -60,45 +39,48 @@ const Expense = () => {
     if (!appUserContext) {
         throw new Error("AppUserContext is not defined");
     }
+    const fetchData = useCallback(async () => {
+        const data = await fetchClient<DashboardResponse>(
+            "/api/v1/users/dashboard",
+            {
+                account_id: selectedAccount === 0 ? appUserContext.accounts[0].ID : selectedAccount,
+                start_date: `${year}-${month}-01`,
+                end_date: `${year}-${month}-${month !== "02" ? "30" : "28"}`,
+            },
+            "POST",
+            true,
+            authContext!.token.token
+        );
+        if (data.body && data.body.data) {
+            setDashboard(data.body);
+        } else {
+            setDashboard({
+                message: "Failed to fetch dashboard data",
+                data: {
+                    graph_data: [],
+                    total_balance: 0,
+                    total_expense: 0,
+                    total_income: 0,
+                    total_transactions: 0,
+                },
+            });
+            console.log("Failed to fetch dashboard data");
+        }
+    }, [month, year, selectedAccount]);
 
     React.useEffect(() => {
-
-        const fetchDashboardData = async () => {
-            const data = await fetchClient<DashboardResponse>(
-                "/api/v1/users/dashboard",
-                fetchRequest!,
-                "POST",
-                true,
-                authContext!.token.token
-            );
-            if (data.body && data.body.data) {
-                setDashboard(data.body);
-            } else {
-                setDashboard({
-                    message: "Failed to fetch dashboard data",
-                    data: {
-                        graph_data: [],
-                        total_balance: 0,
-                        total_expense: 0,
-                        total_income: 0,
-                        total_transactions: 0,
-                    },
-                });
-                console.log("Failed to fetch dashboard data");
-            }
-        };
         if (authContext.isAuthenticated) {
-            setFetchRequest({
-                account_id: selectedAccount || 1,
-                start_date: `${year}-${month}-01`,
-                end_date: `${year}-${month}-${month != "02" ? "30" : "28"}`,
-            });
-            fetchDashboardData().then(r => console.log(r))
-                .catch(e => console.error(e));
-
             appUserContext.fetchTransactions!(authContext.token.token);
         }
     }, []);
+
+    React.useEffect(() => {
+        if (authContext.isAuthenticated) {
+            fetchData().then(r => console.log(r))
+                .catch(e => console.error(e));
+
+        }
+    }, [authContext, fetchData, selectedAccount]);
     return (
         <div className="flex flex-col w-full">
             <AppBar title="Expenses" icon={<GrActions/>}/>
@@ -113,8 +95,13 @@ const Expense = () => {
                         {" "}
                         <TableComponent
                             transactions={appUserContext.transactions!.filter(
-                                (each) => each.AccountID === selectedAccount
-                            )}
+                                (each) => {
+                                    if (selectedAccount === 0) {
+                                        return each.AccountID === appUserContext?.accounts![0].ID;
+                                    }
+                                    return each.AccountID === selectedAccount;
+                                }
+                            ).slice(0, 5)}
                             deleteTrasaction={async (id: number) =>
                                 await appUserContext.deleteTransaction!(id)
                             }
@@ -170,7 +157,7 @@ const Expense = () => {
                                 onChange={(e) => setSelectedAccount(parseInt(e.target.value))}
                                 className="p-2 rounded-md outline-none border-none flex-1/2 border-gray-300"
                             >
-                                <option value="all">All Accounts</option>
+                                <option>Select</option>
                                 {appUserContext.accounts.map((account, index) => (
                                     <option key={index} value={account.ID}>
                                         {account.Name}
@@ -210,7 +197,9 @@ const Expense = () => {
                     <DoughnutChart
                         income={dashboardData?.data.total_income}
                         expense={dashboardData?.data.total_expense}
-                        balance={dashboardData?.data.total_balance}
+                        balance={appUserContext.accounts.filter(
+                            (each) => selectedAccount === each.ID
+                        )[0]?.Balance || 0}
                     />
                 </div>
             </div>
