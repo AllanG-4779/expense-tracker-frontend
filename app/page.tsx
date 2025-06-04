@@ -1,11 +1,16 @@
-import React from "react";
+"use client";
+import React, {useEffect} from "react";
+import {useRouter}  from "next/navigation";
+import GlobalLoader from "@/app/components/GlobalLoader";
 
-const page = () => {
+
+const Home = () => {
   // Redirect to /auth/signin
-  if (typeof window !== "undefined") {
-    window.location.href = "/auth/signin";
-  }
-  return <p>Loading...</p>;
+  const router = useRouter();
+    useEffect(() => {
+        router.push("/auth/signin");
+    }, [router]);
+  return <GlobalLoader />;
 };
 
-export default page;
+export default Home;
