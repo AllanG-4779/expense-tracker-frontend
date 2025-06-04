@@ -6,7 +6,7 @@ import { GrTransaction } from "react-icons/gr";
 
 export const Navigation: NavElement[] = [
   {
-    to: "/account/expenses",
+    to: "/account/overview",
     name: "Overview",
     icon: <BsViewStacked />,
   },

@@ -9,12 +9,14 @@ const budgets = [
     allocation: 5000,
     expenditure: 2000,
     start: "2025-05-01",
+    color: "bg-red-400",
     end: "2025-05-31",
     category: "Transport",
   },
   {
     name: "Upkeep Food",
     allocation: 5000,
+    color: "bg-blue-400",
     expenditure: 4500,
     category: "Food",
     start: "2025-04-01",
@@ -23,6 +25,7 @@ const budgets = [
   {
     name: "Emergency",
     allocation: 3000,
+    color: "bg-red-400",
     expenditure: 1500,
     category: "General",
     start: "2025-05-01",
@@ -33,6 +36,7 @@ const budgets = [
     allocation: 5000,
     expenditure: 2000,
     category: "Travel",
+    color: "bg-indigo-400",
     start: "2025-05-01",
     end: "2025-05-31",
   },
@@ -42,6 +46,7 @@ const budgets = [
     expenditure: 4500,
     category: "Food",
     start: "2025-04-01",
+    color: "bg-[dodgerblue]",
     end: "2023-04-30",
   },
   {
@@ -49,6 +54,7 @@ const budgets = [
     allocation: 3000,
     category: "General",
     expenditure: 1500,
+    color: "bg-green-400",
     start: "2025-05-01",
     end: "2025-05-31",
   },
@@ -58,6 +64,7 @@ const budgets = [
     expenditure: 2000,
     start: "2025-05-01",
     end: "2025-05-31",
+    color: "bg-yellow-400",
     category: "Transport",
   },
   {
@@ -66,6 +73,7 @@ const budgets = [
     expenditure: 4500,
     start: "2025-04-01",
     category: "Food",
+    color: "bg-gray-400",
 
     end: "2023-04-30",
   },
@@ -77,12 +85,13 @@ const page = () => {
       <AppBar title="Budgets" icon={<GrTrain />} />
 
       <div className="p-2 flex flex-col md:w-10/12 md:mx-auto">
-        <p>Your Budgets</p>
+        <p className={"font-bold text-2xl text-slate-500"}>Active Budgets</p>
         <div className="flex flex-col md:flex-row gap-5 mt-5   w-full md:mx-auto flex-wrap">
           {budgets.map((budget, index) => (
             <BudgetComponent
               key={index}
               name={budget.name}
+              color={budget.color}
               allocation={budget.allocation}
               expenditure={budget.expenditure}
               start={budget.start}

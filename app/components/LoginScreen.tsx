@@ -53,7 +53,7 @@ const LoginScreen = () => {
         });
       }
       console.log("User logged in:", authContext); // Debugging line
-      const prev = searchParams.get("redirect")!== null ? searchParams.get("redirect")! : "/account/expenses";
+      const prev = searchParams.get("redirect")!== null ? searchParams.get("redirect")! : "/account/overview";
       router.push( prev);
       return;
     }
