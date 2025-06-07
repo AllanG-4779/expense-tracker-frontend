@@ -1,24 +1,44 @@
 import React from "react";
 import { Transaction } from "../types/apiTypes";
+import { getTransactionComponent } from "../types/NavElement";
 
-const TransactionsCard: React.FC<{ transaction: Transaction }> = ({
-  transaction,
-}) => {
+const TransactionsCard: React.FC<{
+  transaction: Transaction;
+  bg?: string;
+  text?: string;
+}> = ({ transaction }) => {
+  const { bg, text, muted } = getTransactionComponent(transaction.Type);
   return (
-    <div className="flex max-w-full gap-2 p-4 border justify-between border-gray-300 rounded-lg bg-white mb-4">
-      <div className="flex flex-col gap-3">
-        <p className="font-bold text-xl">{transaction.Title}</p>
-        <div className="flex gap-2 items-center text-slate-500">
-          <p>{transaction.Category.Name}</p>
-          <div className="flex items-center gap-2">
-            <div className="bg-slate-500 w-[5px] h-[5px] rounded-full"></div>
-            <p>{transaction.Date}</p>
+    <div className="duration-150 shake text-sm transition-all flex items-center justify-between p-2  bg-white border-t-1 border-slate-300  ">
+      <div className="flex max-w-full gap-5 p-2  justify-between  rounded-lg">
+        <div
+          className={`flex items-center justify-center ${bg} w-20 rounded-lg`}
+        >
+          <p className="font-bold text-xl text-white">
+            {transaction.Category.Name.charAt(0)}
+          </p>
+        </div>
+
+        <div className="flex flex-col gap- justify-between w-full">
+          <div className="category">
+            <p className="text-slate-600 font-semibold">{transaction.Title}</p>
+          </div>
+          <div className="time category flex gap-2 text-xs items-center">
+            <p className={`${text} font-semibold ${muted} p-1 rounded-md`}>
+              {transaction.Category.Name}
+            </p>
+            <p className="text-slate-400">10:30AM</p>
           </div>
         </div>
       </div>
-      <p className="text-green-500 font-bold text-xl">
-        {transaction.Amount.toLocaleString()}
-      </p>
+      <div>
+        <p className={`font-semibold ${text}`}>
+          {transaction.Amount.toLocaleString("en-US", {
+            style: "currency",
+            currency: "KES",
+          })}
+        </p>
+      </div>
     </div>
   );
 };

@@ -5,7 +5,7 @@ import "./globals.css";
 import AuthProvider from "@/app/context/authContext";
 import AppUserProvider from "@/app/context/AppUserContext";
 import React from "react";
-import {LoaderContextProvider} from "@/app/context/LoaderContext";
+import { LoaderContextProvider } from "@/app/context/LoaderContext";
 import GlobalLoader from "@/app/components/GlobalLoader";
 
 const geistSans = Poppins({
@@ -27,13 +27,13 @@ export default function RootLayout({
     <html lang="en">
       <LoaderContextProvider>
         <AuthProvider>
-        <AppUserProvider>
-          <body className={geistSans.className}>
-          <GlobalLoader/>
-          {children}
-          </body>
-        </AppUserProvider>
-      </AuthProvider>
+          <AppUserProvider>
+            <body className={geistSans.className}>
+              <GlobalLoader />
+              {children}
+            </body>
+          </AppUserProvider>
+        </AuthProvider>
       </LoaderContextProvider>
     </html>
   );

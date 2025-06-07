@@ -187,3 +187,4 @@ export interface UniversalResponse<T> {
     successful: boolean;
     body?: T;
 }
+
