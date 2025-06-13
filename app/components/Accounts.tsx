@@ -10,9 +10,9 @@ import { AuthContext } from "@/app/context/authContext";
 
 import { AppUserContext } from "@/app/context/AppUserContext";
 import Modal from "./Modal";
+import CardTransactionComponent from "./CardTransactionComponent";
 
 const Accounts = () => {
-
   const [loading, setLoading] = React.useState(false);
   const authContext = React.useContext(AuthContext);
   const appUserContext = React.useContext(AppUserContext);
@@ -35,7 +35,7 @@ const Accounts = () => {
     <>
       <AppBar title="Accounts" icon={<GrTrain />} />
       {appUserContext.accounts.length > 0 ? (
-        <div className="p-2 flex flex-col md:w-10/12 md:mx-auto">
+        <div className="p-2 flex flex-col md:w-11/12 md:mx-auto">
           <p>Current active Accounts</p>
           <div className="flex flex-col md:flex-row gap-10 mt-5 md:items-center w-full md:mx-auto flex-wrap">
             {appUserContext.accounts.map((account) => (
@@ -68,6 +68,16 @@ const Accounts = () => {
               />
             )}
           </div>
+          <div className="flex flex-col md:hidden">
+            {appUserContext.transactions &&
+            appUserContext.transactions.length > 0 ? (
+              <CardTransactionComponent
+                transactions={appUserContext.transactions!}
+              />
+            ) : (
+              <p>No transactions found for this account.</p>
+            )}
+          </div>
         </div>
       ) : (
         <div className="flex justify-center items-center h-screen">
@@ -90,7 +100,7 @@ const Accounts = () => {
 export default Accounts;
 
 const AddAccount: React.FC<{ token: string }> = ({ token }) => {
-    const {fetchClient} = useFetchClient();
+  const { fetchClient } = useFetchClient();
   const addAccount = async (accountName: string) => {
     const response = await fetchClient<{ message: string; error: string }>(
       "/api/v1/users/activate",
@@ -131,5 +141,3 @@ const AddAccount: React.FC<{ token: string }> = ({ token }) => {
     </div>
   );
 };
-
-

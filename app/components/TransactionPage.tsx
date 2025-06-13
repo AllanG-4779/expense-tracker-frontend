@@ -2,7 +2,6 @@
 import React, { SetStateAction, useContext, useState } from "react";
 import { GrAdd, GrTrain } from "react-icons/gr";
 import AppBar from "./AppBar";
-import TransactionsCard from "./TransactionsCard";
 import Modal from "./Modal";
 import { ModalContext } from "@/app/context/ModalContext";
 import { Transaction } from "../types/apiTypes";
@@ -13,7 +12,7 @@ import AddTransaction from "./AddTransaction";
 import Alert from "./raw/Alert";
 import TableComponent from "./TableComponent";
 import { AppUserContext } from "@/app/context/AppUserContext";
-import { formatDate, isToday, isYesterday } from "date-fns";
+import CardTransactionComponent from "./CardTransactionComponent";
 
 const TransactionPage = () => {
   const data = useContext(ModalContext);
@@ -38,28 +37,6 @@ const TransactionPage = () => {
   if (data === undefined) {
     throw new Error("useModalContext must be used within a ModalProvider");
   }
-  const groupedTransactions = appUserContext.transactions?.reduce(
-    (acc, transaction) => {
-      const date = transaction.Date.split("T")[0];
-      if (!acc[date]) {
-        acc[date] = [];
-      }
-      acc[date].push(transaction);
-      return acc;
-    },
-    {} as Record<string, Transaction[]>
-  );
-
-  const localFormatDate = (date: string) => {
-    if (isToday(new Date(date))) {
-      return "Today";
-    }
-    if (isYesterday(new Date(date))) {
-      return "Yesterday";
-    }
-
-    return formatDate(new Date(date), "MMMM  d");
-  };
 
   return (
     <>
@@ -105,30 +82,9 @@ const TransactionPage = () => {
               </button>
             </div>
             <div className="p-4 md:hidden">
-              {groupedTransactions &&
-              Object.keys(groupedTransactions).length > 0 ? (
-                Object.keys(groupedTransactions)
-                  .sort((a, b) => {
-                    return new Date(b).getTime() - new Date(a).getTime();
-                  })
-                  .map((date) => (
-                    <div key={date} className="mb-4">
-                      <h2 className="text-slate-600 p-2 ">
-                        {localFormatDate(date)}
-                      </h2>
-                      {groupedTransactions[date].map((transaction) => (
-                        <TransactionsCard
-                          key={transaction.ID}
-                          transaction={transaction}
-                          bg="bg-blue-500"
-                          text="text-red-500"
-                        />
-                      ))}
-                    </div>
-                  ))
-              ) : (
-                <div></div>
-              )}
+              <CardTransactionComponent
+                transactions={appUserContext.transactions!}
+              />
             </div>
             <TableComponent
               transactions={appUserContext.transactions!}
