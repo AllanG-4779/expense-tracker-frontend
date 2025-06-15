@@ -18,7 +18,7 @@ const AuthClientRedirect = () => {
         if (redirect && isAuthenticated) {
             router.push(redirect);
         } else if (isAuthenticated) {
-            router.push('/account/expenses');
+            router.push('/account/overview');
         }
     }, [authContext, router, search]);
 

@@ -1,17 +1,18 @@
 "use client";
 import {
-    Account,
+    Account, Category, CategoryResponse,
     Transaction,
-    TransactionFilter,
     TransactionPayload,
     TransactionResponse,
 } from "@/app/types/apiTypes";
 import {useFetchClient} from "@/app/utils/fetchClient";
 import React, {useCallback, useEffect} from "react";
 import {AuthContext} from "./authContext";
+import {FilterCardProps} from "@/app/components/FilterCard";
 
 export type AppUserContextType = {
     accounts: Account[];
+    categories?: Category[];
     setAccounts: React.Dispatch<React.SetStateAction<Account[]>>;
     newTransaction?: (
         transaction: TransactionPayload,
@@ -19,7 +20,7 @@ export type AppUserContextType = {
     ) => Promise<void>;
     fetchTransactions?: (
         token: string,
-        body?: TransactionFilter
+        body?: FilterCardProps
     ) => Promise<void>;
     updateTransaction?: (
         transaction: TransactionPayload,
@@ -37,6 +38,7 @@ const AppUserProvider = ({children}: { children: React.ReactNode }) => {
     const [accounts, setAccounts] = React.useState<Account[]>([]);
     const [transactions, setTransactions] = React.useState<Transaction[]>([]);
     const authContext = React.useContext(AuthContext);
+    const [categories, setCategories] = React.useState<Category[]>([]);
     const {fetchClient} = useFetchClient();
     const newTransaction = async (
         transaction: TransactionPayload,
@@ -53,7 +55,7 @@ const AppUserProvider = ({children}: { children: React.ReactNode }) => {
         await fetchTransactions(token);
     };
 
-    const fetchTransactions = useCallback(async (token: string, body?: TransactionFilter) => {
+    const fetchTransactions = useCallback(async (token: string, body?: FilterCardProps) => {
         const response = await fetchClient<TransactionResponse>(
             "/api/v1/users/filter/transaction",
             body || {page: 0, size: 100},
@@ -104,6 +106,20 @@ const AppUserProvider = ({children}: { children: React.ReactNode }) => {
         await fetchTransactions(authContext!.token.token);
     };
 
+    const fetchCateogories = async () => {
+      const categoriesRes = await  fetchClient<CategoryResponse>(
+        "/api/v1/setup/category/get",
+        { page: 0, size: 100 },
+        "POST"
+      );
+      const response = categoriesRes.body!
+      if (response.categories.length > 0) {
+        setCategories(response.categories);
+      } else {
+        setCategories([]);
+      }
+    };
+
     useEffect(() => {
         if (authContext === undefined) {
             throw new Error("useAuthContext must be used within an AuthProvider");
@@ -141,6 +157,7 @@ const AppUserProvider = ({children}: { children: React.ReactNode }) => {
         };
 
         fetchAccounts();
+        fetchCateogories();
         fetchTransactions(token);
     }, [authContext]);
 
@@ -148,6 +165,7 @@ const AppUserProvider = ({children}: { children: React.ReactNode }) => {
         <AppUserContext.Provider
             value={{
                 accounts,
+                categories,
                 setAccounts,
                 fetchTransactions,
                 newTransaction,
