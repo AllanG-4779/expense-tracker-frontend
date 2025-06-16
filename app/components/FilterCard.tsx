@@ -30,7 +30,7 @@ export type FilterCardProps = {
     min_amount?: number;
     max_amount?: number;
 }
-export const FilterCard: React.FC<{ filter: FilterCardProps }> = () => {
+export const FilterCard = () => {
     // This component is used to filter transactions based on various criteria
     const {fetchClient} = useFetchClient();
        const currentYear = new Date().getFullYear();
