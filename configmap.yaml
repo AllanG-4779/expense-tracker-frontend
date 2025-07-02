@@ -1,0 +1,22 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: ecard-maisha-fiti-config
+  namespace: maisha-fiti-staging
+  labels:
+    app: e-card-service
+    service: ecard
+    team: platform
+data:
+  REDIS_PORT: "6379"
+  S3_BUCKET_NAME: "maisha-fiti-staging-data-bucket-2025"
+  AWS_REGION: "eu-west-1"
+  BASE_URL: "http://payment-service:8087/api/v1/payments"
+  DB_NAME: "ecardb"
+  ENVIRONMENT: "staging"
+  PORT: "9008"
+  REDIS_HOST: "maisha-fiti-staging-staging-redis.dccewy.ng.0001.euw1.cache.amazonaws.com"
+  DB_HOST: "maisha-fiti-staging-staging-instance.cn4ko6qgqdsd.eu-west-1.rds.amazonaws.com"
+  DB_PORT: "5432"
+  RDS_PORT: "5432"
+  S3_PUBLIC_ACCESS: "false"

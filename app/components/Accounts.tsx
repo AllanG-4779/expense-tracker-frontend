@@ -3,7 +3,7 @@ import React from "react";
 import { GrTrain } from "react-icons/gr";
 import AppBar from "./AppBar";
 import AccountsCard from "./raw/AccountsCard";
-import { FaWallet } from "react-icons/fa";
+import { FaPlus, FaWallet } from "react-icons/fa";
 import TableComponent from "./TableComponent";
 import { useFetchClient } from "../utils/fetchClient";
 import { AuthContext } from "@/app/context/authContext";
@@ -16,6 +16,8 @@ const Accounts = () => {
   const [loading, setLoading] = React.useState(false);
   const authContext = React.useContext(AuthContext);
   const appUserContext = React.useContext(AppUserContext);
+  const [show, setShow] = React.useState(false);
+
   const [modal, setModal] = React.useState(false);
   if (!authContext || !appUserContext) {
     throw new Error("AuthContext is not defined");
@@ -34,6 +36,23 @@ const Accounts = () => {
   return (
     <>
       <AppBar title="Accounts" icon={<GrTrain />} />
+      <button
+        onMouseEnter={() => setShow(true)}
+        onMouseLeave={() => setShow(false)}
+        onClick={() => setModal(true)}
+        className="fixed flex items-center z-10 justify-center bottom-0 right-5 p-5 bg-amber-600 hover:bg-amber-700 text-white shadow-md text-center rounded-full"
+      >
+        <FaPlus className="inline flex-shrink-0" />
+        <span
+          className={`ml-2 whitespace-nowrap overflow-hidden transition-all duration-300 ease-in-out ${
+            show
+              ? "opacity-100 max-w-32 translate-x-0"
+              : "opacity-0 max-w-0 -translate-x-2"
+          }`}
+        >
+          Add account
+        </span>
+      </button>
       {appUserContext.accounts.length > 0 ? (
         <div className="p-2 flex flex-col md:w-11/12 md:mx-auto">
           <p>Current active Accounts</p>
@@ -82,17 +101,11 @@ const Accounts = () => {
       ) : (
         <div className="flex justify-center items-center h-screen">
           <p>No accounts found. Please add an account.</p>
-          <button
-            onClick={() => setModal(true)}
-            className="ml-4 bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 transition duration-200"
-          >
-            Add Account
-          </button>
-          <Modal status={modal} updater={setModal}>
-            <AddAccount token={authContext.token.token} />
-          </Modal>
         </div>
       )}
+      <Modal status={modal} updater={setModal}>
+        <AddAccount token={authContext.token.token} />
+      </Modal>
     </>
   );
 };

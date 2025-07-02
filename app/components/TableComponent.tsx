@@ -36,6 +36,10 @@ const TableComponent: React.FC<{
         <tbody className=" text-gray-600 text-xs">
           {transactions &&
             transactions
+              .sort(
+                (a, b) =>
+                  new Date(b.Date).getTime() - new Date(a.Date).getTime()
+              )
               .slice((currentPage - 1) * 10, currentPage * 10)
               .map((trx) => (
                 <tr

@@ -1,6 +1,6 @@
 "use client";
 import React, { useContext, useEffect } from "react";
-import { GrAdd } from "react-icons/gr";
+
 import {
   CategoryResponse,
   Transaction,
@@ -9,6 +9,8 @@ import {
 import { useFetchClient } from "../utils/fetchClient";
 import { AppUserContext } from "@/app/context/AppUserContext";
 import { AuthContext } from "@/app/context/authContext";
+import SelectComponent from "./raw/SelectComponent";
+import Input from "./raw/Input";
 
 const AddTransaction: React.FC<{
   existingTransaction?: Transaction;
@@ -20,7 +22,8 @@ const AddTransaction: React.FC<{
   const [category, setNewCategory] = React.useState("");
   const [type, setType] = React.useState("expense");
   const [loading, setLoading] = React.useState(false);
-  const {fetchClient} = useFetchClient();
+  const [message, setMessage] = React.useState("");
+  const { fetchClient } = useFetchClient();
   const [transaction, setTransaction] = React.useState<TransactionPayload>({
     title: existingTransaction?.Title || "",
     amount: existingTransaction?.Amount || 0,
@@ -40,17 +43,22 @@ const AddTransaction: React.FC<{
   }
 
   const createCategory = async () => {
-    const response =  await fetchClient<{ message: string }>(
+    const response = await fetchClient<{ message: string }>(
       "/api/v1/setup/category",
       { name: category, type: type, description: "" },
       "POST"
     );
 
     if (response.message) {
-      alert(response.message);
       setCategories((prev) => [...prev, category]);
       setNewCategory("");
       setView("addTransaction");
+      setMessage(() => {
+        setTimeout(() => {
+          setMessage("");
+        }, 3000);
+        return response.message;
+      });
     }
   };
 
@@ -64,19 +72,26 @@ const AddTransaction: React.FC<{
       authContext.token.token
     );
     setLoading(false);
+
     console.log("Response:", response); // Debugging line
 
     if (response.message) {
-      alert(response.message);
+      // alert(response.message);
       setNewCategory("");
       setView("addTransaction");
+      setMessage(() => {
+        setTimeout(() => {
+          setMessage("");
+        }, 3000);
+        return response.message;
+      });
     }
     onSuccess?.();
   };
 
   const updateTransaction = async () => {
     setLoading(true);
-    const response = await  fetchClient<{ message: string }>(
+    const response = await fetchClient<{ message: string }>(
       "/api/v1/users/update/transaction",
       transaction,
       "PUT",
@@ -86,11 +101,18 @@ const AddTransaction: React.FC<{
     setLoading(false);
     console.log("Response:", response); // Debugging line
     if (response.message) {
-      alert(response.message);
+      // alert(response.message);
       setNewCategory("");
       setView("addTransaction");
     }
     onSuccess?.();
+  };
+
+  const handleSelectChange = (e: { value: string }) => {
+    setTransaction((prev) => ({
+      ...prev,
+      category: e.value,
+    }));
   };
 
   useEffect(() => {
@@ -102,12 +124,12 @@ const AddTransaction: React.FC<{
 
     window.addEventListener("keydown", handleKeyDown);
     const fetchCateogories = async () => {
-      const categoriesRes = await  fetchClient<CategoryResponse>(
+      const categoriesRes = await fetchClient<CategoryResponse>(
         "/api/v1/setup/category/get",
         { page: 0, size: 100 },
         "POST"
       );
-      const response = categoriesRes.body!
+      const response = categoriesRes.body!;
       if (response.categories.length > 0) {
         setCategories(response.categories.map((category) => category.Name));
       } else {
@@ -130,18 +152,27 @@ const AddTransaction: React.FC<{
           <h1 className="text-2xl font-bold text-[#dc4b3e]">
             {action === "create" ? "Add Transaction" : "Update Transaction"}
           </h1>
-          <input
+          <div
+            className={`bg-green-100 text-green-800 p-1 rounded-md ${
+              message ? "block" : "hidden"
+            }`}
+          >
+            {message}
+          </div>
+          <Input
             type="text"
-            placeholder="Title"
+            label="Transaction Title"
+            placeholder=""
             className="p-2 border-none outline-none rounded-md"
             value={transaction.title}
             onChange={(e) =>
               setTransaction({ ...transaction, title: e.target.value })
             }
           />
-          <input
+          <Input
+            label="Amount"
             type="number"
-            value={transaction.amount}
+            value={transaction.amount.toString()}
             placeholder="Amount"
             onChange={(e) =>
               setTransaction({
@@ -149,39 +180,36 @@ const AddTransaction: React.FC<{
                 amount: parseFloat(e.target.value),
               })
             }
-            className="p-2 border border-none outline-none rounded-md text-4xl "
+            className="p-2 border border-none outline-none rounded-md text-4xl"
           />
-          <div className="flex flex-row gap-3 w-full items-center">
-            <select
+          <div className="flex flex-col mt-[-2] w-full ">
+            <SelectComponent
               value={transaction.category}
-              className="p-2 rounded-md outline-none border-none flex-1/2"
-              onChange={(e) =>
-                setTransaction({ ...transaction, category: e.target.value })
-              }
-            >
-              <option value="">Select Category</option>
-              {categories.length > 0 ? (
-                categories.map((category, index) => (
-                  <option key={index} value={category}>
-                    {`${category} - ${
-                      type === "expense" ? "Expense" : "Income"
-                    }`}
-                  </option>
-                ))
-              ) : (
-                <option value="">No Categories</option>
-              )}{" "}
-            </select>
-            <div
-              className="flex flex-row-reverse gap-2 items-center bg-[#dc4b3e] p-2 rounded-md cursor-pointer"
+              onChange={(e) => {
+                setTransaction((prev) => {
+                  return {
+                    ...prev,
+                    category: e,
+                  };
+                });
+              }}
+              data={categories.map((each) => ({
+                id: each,
+                name: each,
+              }))}
+              title="Category"
+            />
+
+            <p
+              className="text-xs cursor-pointer text-blue-600 hover:underline"
               onClick={() => setView("addCategory")}
             >
-              <p className="text-white">New Category</p>
-              <GrAdd className="text-white" />
-            </div>
+              Add Category
+            </p>
           </div>
-          <input
+          <Input
             type="text"
+            label="Description"
             placeholder="Description"
             className="p-2 border-none outline-none rounded-md"
             value={transaction.description}
@@ -189,27 +217,17 @@ const AddTransaction: React.FC<{
               setTransaction({ ...transaction, description: e.target.value })
             }
           />
-          <div className="flex flex-col gap-3 w-full p-2">
-            <p>Select Account</p>
-            <select
-              className="p-2 rounded-md outline-none border-none flex-1/2 border-gray-300"
-              value={transaction.account_id}
-              onChange={(e) =>
-                setTransaction({
-                  ...transaction,
-                  account_id: parseInt(e.target.value),
-                })
-              }
-            >
-              <option value="">Select Account</option>
-              {appUserContext.accounts.map((account, index) => (
-                <option key={index} value={account.ID}>
-                  {account.Name}
-                </option>
-              ))}
-            </select>
-          </div>
-          <input
+
+          <SelectComponent
+            data={appUserContext.accounts.map((each) => ({
+              id: each.ID,
+              name: each.Name,
+            }))}
+            title="Account"
+          />
+
+          <Input
+            label="Date"
             value={transaction.date}
             onChange={(e) =>
               setTransaction({ ...transaction, date: e.target.value })

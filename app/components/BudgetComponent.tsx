@@ -91,13 +91,13 @@ const BudgetComponent: React.FC<{
         </p>
       </div>
       <div className="flex items-center justify-between mt-3 my-2">
-        <button className="cursor-pointer outline-none border text-gray-500 border-gray-300 p-1 rounded-md text-sm">
+        <button className="cursor-pointer outline-none  text-gray-500  bg-slate-100  p-2 font-semibold rounded-md text-xs">
           Add Expense
         </button>
-        <button className="cursor-pointer outline-none border text-gray-500 border-gray-300 p-1 rounded-md text-sm">
+        <button className="cursor-pointer outline-none  text-gray-500  bg-slate-100  p-2 font-semibold rounded-md text-xs">
           View Details
         </button>
-        <button className="cursor-pointer outline-none border text-gray-500 border-gray-300 p-1 rounded-md text-sm">
+        <button className="cursor-pointer outline-none  text-white p-2 font-semibold bg-slate-800 rounded-md text-xs">
           Adjust Budget
         </button>
       </div>

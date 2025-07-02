@@ -71,7 +71,7 @@ export const useFetchClient = () => {
             const formatted = await res.json();
 
             return {
-                message: "Response was successful",
+                message: "Request processed successfully",
                 successful: true,
                 body: formatted as T,
                 status: res.status,

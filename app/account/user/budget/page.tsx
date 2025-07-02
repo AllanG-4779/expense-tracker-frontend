@@ -1,6 +1,8 @@
 "use client";
 import AppBar from "@/app/components/AppBar";
 import BudgetComponent from "@/app/components/BudgetComponent";
+import CreateBudgetComponent from "@/app/components/CreateBudget";
+import Modal from "@/app/components/Modal";
 
 import React from "react";
 import { GrTrain } from "react-icons/gr";
@@ -83,53 +85,41 @@ const BudgetPage = () => {
   ];
   const [activeBudgets, setBudgets] = React.useState(budgets[0].budgets);
   const [activeMonth, setActiveMonth] = React.useState<number | null>(0);
-
+  const [modal, setModal] = React.useState(false);
   return (
     <>
       <AppBar title="Budgets" icon={<GrTrain />} />
 
-      <div className="flex  md:flex-row gap-4 my-4 md:w-10/12 md:mx-auto w-full justify-start md:flex-center  ml-2 px-5 items-center overflow-x-hidden">
-        {budgets.map((budget, index) => (
-          <MonthComponent
-            key={index}
-            month={budget.date}
-            index={index}
-            activeMonth={activeMonth}
-            setActiveMonth={setActiveMonth}
-            onClick={() => {
-              setBudgets(budget.budgets);
-              console.log("Budgets:", budget.budgets);
-            }}
-          />
-        ))}
+      <div className="flex   md:flex-row my-5 md:w-10/12 md:mx-auto w-full items-center  ">
+        <div className="flex flex-col md:flex-row gap-2 overflow-x-auto ">
+          {budgets.map((budget, index) => (
+            <MonthComponent
+              key={index}
+              month={budget.date}
+              index={index}
+              activeMonth={activeMonth}
+              setActiveMonth={setActiveMonth}
+              onClick={() => {
+                setBudgets(budget.budgets);
+                console.log("Budgets:", budget.budgets);
+              }}
+            />
+          ))}
+        </div>
+        <button
+          onClick={() => setModal(true)}
+          className="text-white font-bold text-sm absolute right-5  rounded-md bg-amber-600 p-2 hover:bg-amber-700 transition-all duration-200 flex items-center top-20"
+        >
+          Add Budget
+        </button>
+        <Modal status={modal} updater={() => setModal(false)}>
+          <CreateBudgetComponent />
+        </Modal>
       </div>
 
       <div className="p-5 flex flex-col md:w-10/12 md:mx-auto">
-        <div className="flex flex-col md:flex-row gap-2">
-          <BudgetCard
-            color="text-blue-500"
-            value={activeBudgets.reduce((acc, budget) => {
-              return acc + budget.allocation;
-            }, 0)}
-            total="Total Budget"
-          />
-          <BudgetCard
-            color="text-green-500"
-            value={activeBudgets.reduce((acc, budget) => {
-              return acc + budget.expenditure;
-            }, 0)}
-            total="Total Expenditure"
-          />
-          <BudgetCard
-            color="text-red-500"
-            value={activeBudgets.reduce((acc, budget) => {
-              return acc + budget.allocation - budget.expenditure;
-            }, 0)}
-            total="Remaining Budget"
-          />
-        </div>
         <div className="mt-4 p-2">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {activeBudgets.map((item, idx) => (
               <BudgetComponent
                 key={idx}
@@ -151,21 +141,6 @@ const BudgetPage = () => {
 
 export default BudgetPage;
 
-const BudgetCard: React.FC<{ color: string; value: number; total: string }> = ({
-  color,
-  value,
-  total,
-}) => {
-  return (
-    <div
-      className={`bg-white shadow-sm  gap-5 w-full rounded-lg p-4 flex flex-col items-center justify-between`}
-    >
-      <p className="text-md uppercase text-gray-500">{total}</p>
-      <p className={`text-3xl font-semibold ${color}`}>{value}</p>
-    </div>
-  );
-};
-
 const MonthComponent: React.FC<{
   month: string;
   index: number;
@@ -184,7 +159,7 @@ const MonthComponent: React.FC<{
   return (
     <div
       onClick={handleClick}
-      className={`p-1 rounded-full px-5 shadow-sm mb-4 hover:bg-gray-100 hover-text-gray-500 transition-all duration-100 cursor-pointer ${
+      className={`p-1 rounded-full  px-5 shadow-sm mb-4 hover:bg-gray-100 hover-text-gray-500 transition-all duration-100 cursor-pointer ${
         activeMonth === index
           ? "bg-gray-900 hover:text-gray-600 text-white"
           : "bg-white"

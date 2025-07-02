@@ -3,14 +3,18 @@ import { InputProps } from "../../types/propstypes";
 
 const Input: React.FC<InputProps> = (props) => {
   return (
-    <div className="border flex flex-col  border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2  focus:ring-blue-500">
-      <label className="text-gray-700 font-bold">{props.label}</label>
+    <div>
+      <label
+        className="text-slate-600 font-semibold text-sm"
+        htmlFor={props.label}
+      >
+        {props.label}
+      </label>
       <input
         type={props.type}
-        value={props.value}
+        // placeholder={props.label}
         onChange={props.onChange}
-        placeholder={props.placeholder}
-        className="w-full outline-none bg-transparent text-gray-700 placeholder-gray-400"
+        className="w-full rounded-md my-2 border border-gray-300 bg-white px-3 py-2 text-sm text-gray-700 shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500"
       />
     </div>
   );
