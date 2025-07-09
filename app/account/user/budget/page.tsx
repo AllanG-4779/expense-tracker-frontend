@@ -4,86 +4,49 @@ import BudgetComponent from "@/app/components/BudgetComponent";
 import CreateBudgetComponent from "@/app/components/CreateBudget";
 import Modal from "@/app/components/Modal";
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { GrTrain } from "react-icons/gr";
+import { AuthContext } from "@/app/context/authContext";
+import { Budget, UniversalResponse } from "@/app/types/apiTypes";
+import { useFetchClient } from "@/app/utils/fetchClient";
 
 const BudgetPage = () => {
-  const budgets = [
-    {
-      date: "JAN-2024",
-      budgets: [
-        {
-          name: "Transport",
-          allocation: 5000,
-          expenditure: 2000,
-          start: "2025-05-01",
-          color: "bg-red-400",
-          end: "2025-05-31",
-          category: "Transport",
-        },
-        {
-          name: "Upkeep Food",
-          allocation: 5000,
-          color: "bg-blue-400",
-          expenditure: 4500,
-          category: "Food",
-          start: "2025-04-01",
-          end: "2023-04-30",
-        },
-        {
-          name: "Emergency",
-          allocation: 3000,
-          color: "bg-red-400",
-          expenditure: 1500,
-          category: "General",
-          start: "2025-05-01",
-          end: "2025-05-31",
-        },
-      ],
-    },
-    {
-      date: "FEB-2024",
-      budgets: [
-        {
-          name: "Transport",
-          allocation: 6000,
-          expenditure: 4000,
-          start: "2025-05-01",
-          color: "bg-red-400",
-          end: "2025-05-31",
-          category: "RENT",
-        },
-        {
-          name: "Upkeep Food",
-          allocation: 8000,
-          color: "bg-blue-400",
-          expenditure: 3500,
-          category: "FOOD",
-          start: "2025-04-01",
-          end: "2023-04-30",
-        },
-        {
-          name: "Emergency",
-          allocation: 5000,
-          color: "bg-red-400",
-          expenditure: 1500,
-          category: "ELECTRICITY",
-          start: "2025-05-01",
-          end: "2025-05-31",
-        },
-        {
-          name: "Emergency",
-          allocation: 1000,
-          color: "bg-red-400",
-          expenditure: 300,
-          category: "EMERGENCY",
-          start: "2025-05-01",
-          end: "2025-05-31",
-        },
-      ],
-    },
-  ];
-  const [activeBudgets, setBudgets] = React.useState(budgets[0].budgets);
+  const authContext = React.useContext(AuthContext);
+  const fetchClient = useFetchClient();
+  const [budgetData, setBudgetData] = useState<Budget[]>([]);
+
+  if (!authContext) {
+    throw new Error("AuthContext is not defined");
+  }
+  const fetchBudgets = async () => {
+    const data = await fetchClient.fetchClient<UniversalResponse<Budget[]>>(
+      "/api/v1/users/get/budgets",
+      { page: 0, size: 100, start_date: "2024-01-01", end_date: "2025-12-31" },
+      "POST",
+      true,
+      authContext.token.token,
+      { showLoader: true }
+    );
+    console.log("Fetched Budgets Data:", data);
+    if (data.status === 200 && data.body) {
+      console.log("Fetched Budgets:", data.body.body);
+      setBudgetData(data.body.body || []);
+    } else {
+      console.error("Failed to fetch budgets:", data.message);
+    }
+  };
+
+  useEffect(() => {
+    fetchBudgets()
+      .then(() => {
+        console.log("Budgets fetched successfully");
+      })
+      .catch((error) => {
+        console.error("Error fetching budgets:", error);
+      });
+  }, [authContext]);
+
+  const [active, setActiveBudget] = useState<string | null>(null);
   const [activeMonth, setActiveMonth] = React.useState<number | null>(0);
   const [modal, setModal] = React.useState(false);
   return (
@@ -92,7 +55,7 @@ const BudgetPage = () => {
 
       <div className="flex   md:flex-row my-5 md:w-10/12 md:mx-auto w-full items-center  ">
         <div className="flex flex-col md:flex-row gap-2 overflow-x-auto ">
-          {budgets.map((budget, index) => (
+          {groupBudgetsByMonth(budgetData).map((budget, index) => (
             <MonthComponent
               key={index}
               month={budget.date}
@@ -100,7 +63,7 @@ const BudgetPage = () => {
               activeMonth={activeMonth}
               setActiveMonth={setActiveMonth}
               onClick={() => {
-                setBudgets(budget.budgets);
+                setActiveBudget(budget.date);
                 console.log("Budgets:", budget.budgets);
               }}
             />
@@ -120,18 +83,26 @@ const BudgetPage = () => {
       <div className="p-5 flex flex-col md:w-10/12 md:mx-auto">
         <div className="mt-4 p-2">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {activeBudgets.map((item, idx) => (
-              <BudgetComponent
-                key={idx}
-                name={item.name}
-                allocation={item.allocation}
-                expenditure={item.expenditure}
-                start={item.start}
-                end={item.end}
-                color={item.color}
-                category={item.category}
-              />
-            ))}
+            {groupBudgetsByMonth(budgetData)
+              .find(
+                (group) => 
+                  group.date ===
+                  (active == null
+                    ? groupBudgetsByMonth(budgetData)[0].date
+                    : active)
+              )
+              ?.budgets.map((item, idx) => (
+                <BudgetComponent
+                  key={idx}
+                  name={item.Category.Name}
+                  allocation={item.Amount}
+                  expenditure={item.Amount - item.Balance}
+                  start={item.StartDate}
+                  end={item.EndDate}
+                  color={"#dc4b3e"}
+                  category={item.Category.Name}
+                />
+              ))}
           </div>
         </div>
       </div>
@@ -168,4 +139,28 @@ const MonthComponent: React.FC<{
       <p>{month}</p>
     </div>
   );
+};
+
+const groupBudgetsByMonth = (budgets: Budget[]) => {
+  console.log("Grouping Budgets by Month:", budgets);
+  if (typeof budgets === "undefined" || budgets.length === 0) {
+    console.log("No budgets available to group.");
+    return [];
+  }
+
+  const grouped: { date: string; budgets: Budget[] }[] = [];
+  budgets.forEach((budget) => {
+    const month = new Date(budget.StartDate).toLocaleString("default", {
+      month: "long",
+      year: "numeric",
+    });
+    const existingGroup = grouped.find((g) => g.date === month);
+    if (existingGroup) {
+      existingGroup.budgets.push(budget);
+    } else {
+      grouped.push({ date: month, budgets: [budget] });
+    }
+  });
+  console.log("Grouped Budgets:", grouped);
+  return grouped;
 };

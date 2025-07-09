@@ -108,10 +108,18 @@ const AddTransaction: React.FC<{
     onSuccess?.();
   };
 
-  const handleSelectChange = (e: { value: string }) => {
+  const handleCategoryChange = (
+    e: { value: unknown; label: string } | null
+  ) => {
     setTransaction((prev) => ({
       ...prev,
-      category: e.value,
+      category: e?.value as string,
+    }));
+  };
+  const handleAccountChange = (e: { value: unknown; label: string } | null) => {
+    setTransaction((prev) => ({
+      ...prev,
+      account_id: e?.value as number,
     }));
   };
 
@@ -185,18 +193,11 @@ const AddTransaction: React.FC<{
           <div className="flex flex-col mt-[-2] w-full ">
             <SelectComponent
               value={transaction.category}
-              onChange={(e) => {
-                setTransaction((prev) => {
-                  return {
-                    ...prev,
-                    category: e,
-                  };
-                });
-              }}
               data={categories.map((each) => ({
                 id: each,
                 name: each,
               }))}
+              onChange={handleCategoryChange}
               title="Category"
             />
 
@@ -224,6 +225,8 @@ const AddTransaction: React.FC<{
               name: each.Name,
             }))}
             title="Account"
+            value={transaction.account_id}
+            onChange={handleAccountChange}
           />
 
           <Input

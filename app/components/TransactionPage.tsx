@@ -144,6 +144,7 @@ export const CardComponent: React.FC<{
   refreshTransactions,
 }) => {
   const [modal, setModal] = React.useState(false);
+  console.log("Transaction:", transaction);
 
   return (
     <div

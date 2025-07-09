@@ -1,5 +1,6 @@
 import React from "react";
 import { FaCalendar } from "react-icons/fa";
+import { differenceInDays, isPast } from "date-fns";
 
 const BudgetComponent: React.FC<{
   name: string;
@@ -9,7 +10,15 @@ const BudgetComponent: React.FC<{
   color: string;
   start: string;
   end: string;
-}> = ({ category, expenditure, allocation }) => {
+}> = ({ category, expenditure, allocation, start, end }) => {
+  // days using date-fns or similar library
+  const daysLeft = () => {
+    const date1 = new Date(start);
+    const date2 = new Date(end);
+    const days = differenceInDays(date2, date1);
+    return days;
+  };
+
   const expenditurePercent = (expenditure / allocation) * 100;
   const bgColor =
     expenditurePercent < 50
@@ -37,7 +46,9 @@ const BudgetComponent: React.FC<{
       : "bg-red-50";
 
   const statusText =
-    expenditurePercent < 50
+    isPast(new Date(end)) || expenditurePercent >= 100
+      ? "FINISHED"
+      : expenditurePercent < 50
       ? "ON TRACK"
       : expenditurePercent < 80
       ? "WATCH OUT"
@@ -87,7 +98,7 @@ const BudgetComponent: React.FC<{
       <div className="flex text-gray-500 text-sm items-center justify-between mt-3 my-2">
         <p>KES {allocation - expenditure} remaining</p>
         <p className="text-xs flex items-center gap-1">
-          <FaCalendar /> <span>18 days left</span>
+          <FaCalendar /> <span>{daysLeft()}</span>
         </p>
       </div>
       <div className="flex items-center justify-between mt-3 my-2">

@@ -181,10 +181,62 @@ export interface DashboardResponse {
   message: string;
 }
 export interface UniversalResponse<T> {
-    message: string;
-    error?: string;
-    status: number;
-    successful: boolean;
-    body?: T;
+  message: string;
+  error?: string;
+  status: number;
+  successful: boolean;
+  body?: T;
 }
 
+// budget
+/**
+ *   "ID": 1,
+            "CreatedAt": "2025-07-05T22:01:58.720753+03:00",
+            "UpdatedAt": "2025-07-05T22:01:58.720753+03:00",
+            "DeletedAt": null,
+            "Amount": 5000,
+            "Balance": 5000,
+            "CategoryID": 3,
+            "UserID": 1,
+            "StartDate": "2024-04-01",
+            "Utilization": 0,
+            "EndDate": "2024-04-30",
+            "Fraction": 0,
+            "Category": {
+                "ID": 3,
+                "CreatedAt": "2025-05-14T00:53:28.718763+03:00",
+                "UpdatedAt": "2025-05-14T00:53:28.718763+03:00",
+                "DeletedAt": null,
+                "Name": "FOOD",
+                "Icon": "",
+                "Type": "expense",
+                "Description": "",
+                "Transactions": null,
+                "Budget": null
+            }
+        }
+ */
+export type Budget = {
+  ID: number;
+  CreatedAt: string;
+  UpdatedAt: string;
+  DeletedAt: string | null;
+  Amount: number;
+  Balance: number;
+  CategoryID: number;
+  UserID: number;
+  StartDate: string;
+  Utilization: number;
+  EndDate: string;
+  Fraction: number;
+  Category: {
+    ID: number;
+    CreatedAt: string;
+    UpdatedAt: string;
+    DeletedAt: string | null;
+    Name: string;
+    Icon: string;
+    Type: "income" | "expense";
+    Description: string;   
+  };
+};

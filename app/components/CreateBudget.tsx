@@ -29,11 +29,36 @@ const CreateBudgetComponent: React.FC<{ name?: string }> = () => {
       {/* Form for creating budget goes here */}
       <form>
         {/* Input fields for budget details */}
-        <Input type="text" label="Budget Name" value="" placeholder="" />
-        <Input type="text" label="Allocated Amount" value="" placeholder="" />
-        <Input type="date" label="From" value="" placeholder="" />
-        <Input type="date" label="To" value="" placeholder="" />
+        <Input
+          type="text"
+          label="Budget Name"
+          value="33"
+          placeholder=""
+          onChange={() => {}}
+        />
+        <Input
+          type="text"
+          label="Allocated Amount"
+          value="33"
+          placeholder=""
+          onChange={() => {}}
+        />
+        <Input
+          type="date"
+          label="From"
+          value=""
+          placeholder="33"
+          onChange={() => {}}
+        />
+        <Input
+          type="date"
+          label="To"
+          value=""
+          placeholder="33"
+          onChange={() => {}}
+        />
         <SelectComponent
+          value={""}
           title="Choose Category"
           data={categories!.map((each) => ({
             name: each.Name,
