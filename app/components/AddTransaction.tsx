@@ -12,6 +12,8 @@ import { AuthContext } from "@/app/context/authContext";
 import SelectComponent from "./raw/SelectComponent";
 import Input from "./raw/Input";
 
+import { MdClose } from "react-icons/md";
+
 const AddTransaction: React.FC<{
   existingTransaction?: Transaction;
   action?: string;
@@ -23,6 +25,7 @@ const AddTransaction: React.FC<{
   const [type, setType] = React.useState("expense");
   const [loading, setLoading] = React.useState(false);
   const [message, setMessage] = React.useState("");
+  const [status, setStatus] = React.useState(0);
   const { fetchClient } = useFetchClient();
   const [transaction, setTransaction] = React.useState<TransactionPayload>({
     title: existingTransaction?.Title || "",
@@ -53,12 +56,6 @@ const AddTransaction: React.FC<{
       setCategories((prev) => [...prev, category]);
       setNewCategory("");
       setView("addTransaction");
-      setMessage(() => {
-        setTimeout(() => {
-          setMessage("");
-        }, 3000);
-        return response.message;
-      });
     }
   };
 
@@ -69,7 +66,8 @@ const AddTransaction: React.FC<{
       transaction,
       "POST",
       true,
-      authContext.token.token
+      authContext.token.token,
+      { showLoader: false }
     );
     setLoading(false);
 
@@ -78,15 +76,11 @@ const AddTransaction: React.FC<{
     if (response.message) {
       // alert(response.message);
       setNewCategory("");
+      setStatus(response.status);
       setView("addTransaction");
-      setMessage(() => {
-        setTimeout(() => {
-          setMessage("");
-        }, 3000);
-        return response.message;
-      });
+      setMessage(response.message);
     }
-    onSuccess?.();
+    // onSuccess?.();
   };
 
   const updateTransaction = async () => {
@@ -149,7 +143,7 @@ const AddTransaction: React.FC<{
     return () => {
       window.removeEventListener("keydown", handleKeyDown);
     };
-  }, [loading]);
+  }, []);
   return (
     <div className="flex flex-col p-5 bg-white rounded-lg shadow-md max-w-md mx-auto w-full md:mx-auto">
       {view === "addTransaction" ? (
@@ -161,12 +155,24 @@ const AddTransaction: React.FC<{
             {action === "create" ? "Add Transaction" : "Update Transaction"}
           </h1>
           <div
-            className={`bg-green-100 text-green-800 p-1 rounded-md ${
-              message ? "block" : "hidden"
+            className={` ${
+              status == 200
+                ? "text-green-700 bg-green-50"
+                : "text-red-700 bg-red-50"
+            } transition-all duration-300 ease-in-out text-xs flex justify-between rounded-md letter-spacing-1 overflow-hidden ${
+              message
+                ? "opacity-100 scale-100 max-h-20 p-3 px-2 mb-2"
+                : "opacity-0 scale-95 max-h-0 p-0 px-0 mb-0"
             }`}
           >
-            {message}
+            <p>{message}</p>
+            <MdClose
+              onClick={() => setMessage("")}
+              size={16}
+              className="cursor-pointer hover:font-extrabold"
+            />
           </div>
+
           <Input
             type="text"
             label="Transaction Title"

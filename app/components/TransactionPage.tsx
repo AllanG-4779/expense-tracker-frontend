@@ -13,7 +13,7 @@ import Alert from "./raw/Alert";
 import TableComponent from "./TableComponent";
 import { AppUserContext } from "@/app/context/AppUserContext";
 import CardTransactionComponent from "./CardTransactionComponent";
-import {FilterCard} from "@/app/components/FilterCard";
+import { FilterCard } from "@/app/components/FilterCard";
 
 const TransactionPage = () => {
   const data = useContext(ModalContext);
@@ -71,7 +71,7 @@ const TransactionPage = () => {
                       : "max-h-0 opacity-0 scale-y-95"
                   } p-4 rounded-lg origin-top md:max-h-[500px] md:opacity-100 md:scale-y-100`}
                 >
-                  <FilterCard/>
+                  <FilterCard />
                 </div>
               </div>
 
@@ -117,7 +117,7 @@ const TransactionPage = () => {
           <Modal status={modal} updater={updateModal}>
             <AddTransaction
               onSuccess={() => {
-                updateModal(false);
+                updateModal(true);
               }}
             />
           </Modal>
@@ -172,6 +172,5 @@ export const CardComponent: React.FC<{
     </div>
   );
 };
-
 
 export default TransactionPage;
